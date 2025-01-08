@@ -12,7 +12,7 @@ const getProfile = async (req, res) => {
     email: "test",
   };
 
-  return apiResponse(FETCH, "user", ttest, res);
+  return apiResponse(messages.FETCH, "user", ttest, res);
 };
 const createUser = apiHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -37,7 +37,6 @@ const createUser = apiHandler(async (req, res) => {
 });
 
 const login = apiHandler(async (req, res) => {
-  console.log(req.body);
   const { email, password } = req.body;
 
   const userData = await userModel.findOne({ email });

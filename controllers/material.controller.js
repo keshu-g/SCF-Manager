@@ -9,6 +9,11 @@ const getMaterials = apiHandler(async (req, res) => {
 
 const getMaterial = apiHandler(async (req, res) => {
   const material = await materialModel.findOne({ _id: req.params.id });
+
+  if (!material) {
+    return apiError(messages.NOT_FOUND, "Material", null, res);
+  }
+
   return apiResponse(messages.FETCH, "Material", material, res);
 });
 

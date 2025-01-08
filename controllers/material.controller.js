@@ -43,6 +43,15 @@ const updateMaterial = apiHandler(async (req, res) => {
     return apiError(messages.NOT_FOUND, "Material", null, res);
   }
 
+  const existingMaterial = await materialModel.findOne({
+    name: materialData.name,
+    _id: { $ne: materialData.id },
+  });
+
+  if (existingMaterial) {
+    return apiError(messages.EXISTS, "Material with this name", null, res);
+  }
+
   material.updatedBy = req.user._id;
 
   const updatedMaterial = await materialModel.findOneAndUpdate(

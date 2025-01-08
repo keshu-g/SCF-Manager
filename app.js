@@ -13,6 +13,12 @@ app.use(cors({ credentials: true, origin: constants.CORS_ORIGIN }));
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(express.static("public"));
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError) {
+    return res.status(400).json({ error: "Invalid JSON format" });
+  }
+  next(err);
+});
 app.use(
   compression({
     level: 6,

@@ -1,10 +1,12 @@
-const path = require("path");
-const app = require("./app");
-const { PORT, NODE_ENV, BASE_URL } = require("./constants");
-const express = require("express");
-const connectDB = require("./database/mongodb");
+import { join, resolve } from "path";
+import { listen, use, get } from "./app.js";
+import constants from "./constants.js";
+const { NODE_ENV, PORT, BE_BASE_URL } = constants;
+import express from "express";
+import connectDB from "./database/mongodb.js";
 
-let serverURL = NODE_ENV === "production" ? BASE_URL : `http://localhost:${PORT}`;
+let serverURL =
+  NODE_ENV === "production" ? BE_BASE_URL : `http://localhost:${PORT}`;
 
 let logString = `
 +++ Server Started +++
@@ -15,20 +17,20 @@ URL         : ${serverURL}
 
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
+    listen(PORT, () => {
       console.log(logString);
     });
   })
   .catch((err) => console.log(`DB Error: ${err.message}`));
 
 if (NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "client", "build")));
-  app.get("/", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  use(express.static(join(__dirname, "client", "build")));
+  get("/", (req, res) => {
+    res.sendFile(resolve(__dirname, "client", "build", "index.html"));
   });
-  app.get("/*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  get("/*", (req, res) => {
+    res.sendFile(resolve(__dirname, "client", "build", "index.html"));
   });
 } else {
-  app.get("/", (req, res) => res.send(`ReBudget is running on port: ${PORT}`));
+  get("/", (req, res) => res.send(`ReBudget is running on port: ${PORT}`));
 }

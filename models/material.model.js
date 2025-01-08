@@ -1,22 +1,21 @@
 const { Schema, model } = require("mongoose");
 
-const userSchema = new Schema(
+const materialSchema = new Schema(
   {
-    fullName: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    email: {
+    name: {
       type: String,
       required: true,
       trim: true,
       unique: true,
     },
-    password: {
+    description: {
       type: String,
-      required: true,
       trim: true,
+    },
+    totalQuantity: {
+      type: Number,
+      required: true,
+      min: [0, "Quantity can not be less than 0"],
     },
     createdBy: {
       type: Schema.Types.ObjectId,
@@ -30,6 +29,6 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-const User = model("User", userSchema);
+const Material = model("Material", materialSchema);
 
-module.exports = User;
+module.exports = Material;

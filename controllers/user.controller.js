@@ -30,6 +30,7 @@ const createUser = apiHandler(async (req, res) => {
 });
 
 const login = apiHandler(async (req, res) => {
+  console.log(req.body);
   const { email, password } = req.body;
 
   const userData = await userModel.findOne({ email });

@@ -1,15 +1,15 @@
-const express = require("express");
-const cors = require("cors");
-const compression = require("compression");
+import express from "express";
+import cors from "cors";
+import compression from "compression";
 
-const { CORS_ORIGIN } = require("./constants");
-const { authGuard } = require("./middlewares/guard.middleware");
+import constants from "./constants.js";
+import { authGuard } from "./middlewares/guard.middleware.js";
 
-const routes = require("./routes");
+import routes from "./routes/index.js";
 
 const app = express();
 
-app.use(cors({ credentials: true, origin: CORS_ORIGIN }));
+app.use(cors({ credentials: true, origin: constants.CORS_ORIGIN }));
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(express.static("public"));
@@ -20,11 +20,11 @@ app.use(
       if (req.headers["x-no-compression"]) {
         return false;
       }
-      return compression.filter(req, res);
+      return _filter(req, res);
     },
   })
 );
 
 app.use("/api/v1", authGuard, routes);
 
-module.exports = app;
+export default app;

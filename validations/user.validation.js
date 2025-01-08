@@ -1,5 +1,10 @@
 const Joi = require("joi");
-const { emailValidation, stringValidation, idValidation, passwordValidation } = require("../utils/joiValidationHelper");
+const {
+  emailValidation,
+  stringValidation,
+  idValidation,
+  passwordValidation,
+} = require("../utils/joiValidationHelper");
 
 const getUserSchema = Joi.object({
   id: idValidation,

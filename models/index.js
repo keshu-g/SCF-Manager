@@ -1,7 +1,4 @@
-const userModel = require("../models/user.model");
-const materialModel = require("../models/material.model");
+import userModel from "../models/user.model.js";
+import materialModel from "../models/material.model.js";
 
-module.exports = {
-  userModel,
-  materialModel,
-};
+export { userModel, materialModel };

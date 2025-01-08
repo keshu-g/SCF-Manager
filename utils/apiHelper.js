@@ -1,5 +1,5 @@
-const { isEmpty } = require("lodash");
-const { SERVER_ERROR } = require("./messages");
+import _ from "lodash";
+import messages from "./messages.js";
 
 const apiHandler = (requestHandler) => {
   return async (req, res, next) => {
@@ -7,7 +7,7 @@ const apiHandler = (requestHandler) => {
       await requestHandler(req, res, next);
     } catch (err) {
       console.log(err);
-      return apiError(SERVER_ERROR, null, err, res);
+      return apiError(messages.SERVER_ERROR, null, err, res);
     }
   };
 };
@@ -20,7 +20,7 @@ const apiResponse = async ([statusCode, msg], item, data, res) => {
     message,
   };
 
-  if (!isEmpty(data)) {
+  if (!_.isEmpty(data)) {
     response["data"] = data;
   }
 
@@ -56,7 +56,7 @@ const apiError = async ([statusCode, msg], item, err, res) => {
   return error;
 };
 
-module.exports = {
+export {
   apiHandler,
   apiResponse,
   apiError,

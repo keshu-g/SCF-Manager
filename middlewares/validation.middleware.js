@@ -1,6 +1,6 @@
 const { apiError } = require("../utils/apiHandler");
 const { CUSTOM_ERROR } = require("../utils/messages");
-const { populateMessage } = require("../utils/joiValidationHelper");
+const { populateMessage } = require("../utils/joiValidationHelper").default;
 
 const validate = (schema, type) => (req, res, next) => {
   const { error } = schema.validate(req[type]);

@@ -1,8 +1,13 @@
-const jwt = require("jsonwebtoken");
-const { apiHandler, apiError } = require("../utils/apiHandler");
-const { JWT_SECRET } = require("../constants");
-const { UNAUTHORIZED } = require("../utils/messages");
-const { userModel } = require("../models");
+import jwt from "jsonwebtoken";
+import { apiError, apiHandler } from "../utils/apiHelper.js";
+
+import constants from "../constants.js";
+const { JWT_SECRET } = constants;
+
+import messages from "../utils/messages.js";
+const { UNAUTHORIZED } = messages;
+
+import { userModel } from "../models/index.js";
 
 const authGuard = apiHandler(async (req, res, next) => {
   const openRoutes = ["/users/test", "/users/login"];
@@ -38,6 +43,6 @@ const authGuard = apiHandler(async (req, res, next) => {
   next();
 });
 
-module.exports = {
+export {
   authGuard,
 };

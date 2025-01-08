@@ -1,36 +1,42 @@
-const Joi = require("joi");
-const {
+import joi from "joi";
+import {
   emailValidation,
   stringValidation,
   idValidation,
   passwordValidation,
-} = require("../utils/joiValidationHelper");
+} from "../utils/joiValidationHelper.js";
 
-const getUserSchema = Joi.object({
+const getUserSchema = joi.object({
   id: idValidation,
 });
 
-const addUserBodySchema = Joi.object({
-  fullName: stringValidation,
-  email: emailValidation,
-  password: stringValidation,
-}).unknown(false);
+const addUserBodySchema = joi
+  .object({
+    fullName: stringValidation,
+    email: emailValidation,
+    password: stringValidation,
+  })
+  .unknown(false);
 
-const updateUserSchema = Joi.object({
-  params: Joi.object({
-    id: idValidation,
-  }),
-  body: addUserBodySchema.keys({
-    changePassword: passwordValidation.optional().allow(""),
-  }),
-}).unknown(false);
+const updateUserSchema = joi
+  .object({
+    params: joi.object({
+      id: idValidation,
+    }),
+    body: addUserBodySchema.keys({
+      changePassword: passwordValidation.optional().allow(""),
+    }),
+  })
+  .unknown(false);
 
-const loginUserSchema = Joi.object({
-  email: stringValidation,
-  password: stringValidation,
-}).unknown(false);
+const loginUserSchema = joi
+  .object({
+    email: stringValidation,
+    password: stringValidation,
+  })
+  .unknown(false);
 
-module.exports = {
+export {
   getUserSchema,
   addUserBodySchema,
   updateUserSchema,

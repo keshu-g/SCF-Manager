@@ -1,10 +1,18 @@
-const router = require("express").Router();
-const { validate } = require("../middlewares/validation.middleware");
-const { addUserBodySchema, loginUserSchema } = require("../validations/user.validation");
-const { getProfile, createUser, login } = require("../controllers/user.controller");
+import { Router } from "express";
+const router = Router();
+import { validate } from "../middlewares/validation.middleware.js";
+import {
+  addUserBodySchema,
+  loginUserSchema,
+} from "../validations/user.validation.js";
+import {
+  getProfile,
+  createUser,
+  login,
+} from "../controllers/user.controller.js";
 
 router.get("/test", getProfile);
 router.post("/", validate(addUserBodySchema, "body"), createUser);
 router.post("/login", validate(loginUserSchema, "body"), login);
 
-module.exports = router;
+export default router;

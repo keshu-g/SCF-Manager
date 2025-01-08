@@ -1,22 +1,27 @@
-const Joi = require("joi");
-const { idValidation } = require("../utils/joiValidationHelper");
-const { param } = require("../routes/material.route");
+import joi from "joi";
+import {
+  stringValidation,
+  idValidation,
+  numberValidation,
+} from "../utils/joiValidationHelper.js";
 
-const getMaterialSchema = Joi.object({
+const getMaterialSchema = joi.object({
   id: idValidation,
 });
 
-const addMaterialSchema = Joi.object({
-  name: Joi.string().trim().required(),
-  description: Joi.string().trim().required(),
-  totalQuantity: Joi.number().required().min(0),
-}).unknown(false);
+const addMaterialSchema = joi
+  .object({
+    name: stringValidation,
+    description: stringValidation,
+    totalQuantity: numberValidation,
+  })
+  .unknown(false);
 
 const updateMaterialSchema = addMaterialSchema.keys({
   id: idValidation,
 });
 
-module.exports = {
+export default {
   getMaterialSchema,
   addMaterialSchema,
   updateMaterialSchema,

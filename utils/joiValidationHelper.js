@@ -1,7 +1,8 @@
-const Joi = require("joi");
-const regex = require("./regex");
-const { toObjectId, isValidObjId } = require("./helper");
-const { isEmpty } = require("lodash");
+import joi from "joi";
+import regex from "./regex.js";
+const { PASSWORD, PHONE_NUMBER } = regex;
+import { toObjectId, isValidObjId } from "./helper.js";
+import _ from "lodash";
 
 const joiMessages = {
   "date.base": ":key must be a valid date",
@@ -32,38 +33,42 @@ const joiMessages = {
   "object.base": ":key must be an object",
 };
 
-const idValidation = Joi.string()
+const idValidation = joi.string()
   .trim()
   .required()
-  .custom((value, helper) => (isValidObjId(value) ? toObjectId(value) : helper.error("any.invalid")));
+  .custom((value, helper) =>
+    isValidObjId(value) ? toObjectId(value) : helper.error("any.invalid")
+  );
 
-const emailValidation = Joi.string().trim().required().email();
+const emailValidation = joi.string().trim().required().email();
 
-const passwordValidation = Joi.string()
+const passwordValidation = joi.string()
   .required()
-  .custom((value, helper) => (regex.PASSWORD.test(value) ? value : helper.error("password.invalid")));
+  .custom((value, helper) =>
+    PASSWORD.test(value) ? value : helper.error("password.invalid")
+  );
 
-const phoneNumberValidation = Joi.string().regex(regex.PHONE_NUMBER).required();
+const phoneNumberValidation = joi.string().regex(PHONE_NUMBER).required();
 
-const stringValidation = Joi.string().trim().required();
+const stringValidation = joi.string().trim().required();
 
-const dateValidation = Joi.date().iso().required();
+const dateValidation = joi.date().iso().required();
 
-const pastDateValidation = Joi.date().iso().min(new Date()).required();
+const pastDateValidation = joi.date().iso().min(new Date()).required();
 
-const numberValidation = Joi.number().integer().required();
+const numberValidation = joi.number().integer().required();
 
-const decimalValidation = Joi.number().required();
+const decimalValidation = joi.number().required();
 
-const booleanValidation = Joi.boolean().required();
+const booleanValidation = joi.boolean().required();
 
-const objectValidation = Joi.object({}).required().unknown();
+const objectValidation = joi.object().required().unknown();
 
 const populateMessage = (error) => {
   let errorDetails = error.details[0];
   console.log("errorDetails", errorDetails);
   let message = joiMessages[errorDetails.type];
-  if (isEmpty(message)) {
+  if (_.isEmpty(message)) {
     errorDetails.type = "any.custom";
     message = joiMessages["any.custom"];
   }
@@ -73,7 +78,10 @@ const populateMessage = (error) => {
       break;
 
     case "array.unique":
-      message = message.replace(":key", errorDetails.context?.value[errorDetails.context?.path]);
+      message = message.replace(
+        ":key",
+        errorDetails.context?.value[errorDetails.context?.path]
+      );
       message = message.replace(":path", errorDetails.context?.path);
       message = message.replace(":label", errorDetails.context?.label);
       break;
@@ -81,7 +89,9 @@ const populateMessage = (error) => {
     default:
       message = message.replace(
         ":key",
-        `${errorDetails.context.label}`.includes(".") ? errorDetails.context.key : errorDetails.context.label
+        `${errorDetails.context.label}`.includes(".")
+          ? errorDetails.context.key
+          : errorDetails.context.label
       );
       message = message.replace(":value", errorDetails.context?.value);
       break;
@@ -89,7 +99,7 @@ const populateMessage = (error) => {
   return message;
 };
 
-module.exports = {
+export {
   joiMessages,
   idValidation,
   emailValidation,

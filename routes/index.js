@@ -1,10 +1,10 @@
-const express = require("express");
-const router = express.Router();
+import { Router } from "express";
+const router = Router();
 
-const userRouter = require("./user.route");
-const materialRouter = require("./material.route");
+import userRouter from "./user.route.js";
+import materialRouter from "./material.route.js";
 
 router.use("/users", userRouter);
 router.use("/materials", materialRouter);
 
-module.exports = router;
+export default router;

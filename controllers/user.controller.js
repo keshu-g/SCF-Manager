@@ -1,6 +1,6 @@
 const { userModel } = require("../models");
 const { apiResponse, apiError, apiHandler } = require("../utils/apiHandler");
-const { encrypt, generatePassword } = require("../utils/helper");
+const { encrypt, generatePassword } = require("../utils/helper").default;
 const { FETCH, EXISTS, INVALID_AUTH } = require("../utils/messages");
 const jwt = require("jsonwebtoken");
 const constants = require("../constants");

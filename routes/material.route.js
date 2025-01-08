@@ -11,7 +11,7 @@ const {
   getMaterialSchema,
   addMaterialSchema,
   updateMaterialSchema,
-} = require("../validations/material.validation");
+} = require("../validations/material.validation").default;
 
 router.get("/", getMaterials);
 router.get("/:id", validate(getMaterialSchema, "params"), getMaterial);
@@ -19,4 +19,4 @@ router.post("/", validate(addMaterialSchema, "body"), createMaterial);
 router.put("/", validate(updateMaterialSchema, "body"), updateMaterial);
 router.delete("/:id", validate(getMaterialSchema, "params"), deleteMaterial);
 
-module.exports = router;
+export default router;

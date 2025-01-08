@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+import { Schema, model } from "mongoose";
 
 const materialSchema = new Schema(
   {
@@ -31,4 +31,4 @@ const materialSchema = new Schema(
 
 const Material = model("Material", materialSchema);
 
-module.exports = Material;
+export default Material;

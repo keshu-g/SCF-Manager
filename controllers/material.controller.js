@@ -1,22 +1,15 @@
-const { materialModel } = require("../models");
-const { apiResponse, apiError, apiHandler } = require("../utils/apiHandler");
-const {
-  FETCH,
-  EXISTS,
-  NOT_FOUND,
-  ADD_SUCCESS,
-  UPDATE_SUCCESS,
-  DELETE_SUCCESS,
-} = require("../utils/messages");
+import { materialModel } from "../models/index.js";
+import { apiResponse, apiError, apiHandler } from "../utils/apiHelper.js";
+import messages from "../utils/messages.js";
 
 const getMaterials = apiHandler(async (req, res) => {
   const materials = await materialModel.find();
-  return apiResponse(FETCH, "Materials", materials, res);
+  return apiResponse(messages.FETCH, "Materials", materials, res);
 });
 
 const getMaterial = apiHandler(async (req, res) => {
   const material = await materialModel.findOne({ _id: req.params.id });
-  return apiResponse(FETCH, "Material", material, res);
+  return apiResponse(messages.FETCH, "Material", material, res);
 });
 
 const createMaterial = apiHandler(async (req, res) => {
@@ -27,13 +20,13 @@ const createMaterial = apiHandler(async (req, res) => {
   });
 
   if (existingMaterial) {
-    return apiError(EXISTS, "Material with this name", null, res);
+    return apiError(messages.EXISTS, "Material with this name", null, res);
   }
 
   materialData.createdBy = req.user._id;
 
   const material = await materialModel.create(materialData);
-  return apiResponse(ADD_SUCCESS, "Material", material, res);
+  return apiResponse(messages.ADD_SUCCESS, "Material", material, res);
 });
 
 const updateMaterial = apiHandler(async (req, res) => {
@@ -42,7 +35,7 @@ const updateMaterial = apiHandler(async (req, res) => {
   const material = await materialModel.findOne({ _id: materialData.id });
 
   if (!material) {
-    return apiError(NOT_FOUND, "Material", null, res);
+    return apiError(messages.NOT_FOUND, "Material", null, res);
   }
 
   material.updatedBy = req.user._id;
@@ -55,7 +48,7 @@ const updateMaterial = apiHandler(async (req, res) => {
     }
   );
 
-  return apiResponse(UPDATE_SUCCESS, "Material", updatedMaterial, res);
+  return apiResponse(messages.UPDATE_SUCCESS, "Material", updatedMaterial, res);
 });
 
 const deleteMaterial = apiHandler(async (req, res) => {
@@ -64,13 +57,13 @@ const deleteMaterial = apiHandler(async (req, res) => {
   });
 
   if (!materialData) {
-    return apiError(NOT_FOUND, "Material", null, res);
+    return apiError(messages.NOT_FOUND, "Material", null, res);
   }
 
-  return apiResponse(DELETE_SUCCESS, "Material", null, res);
+  return apiResponse(messages.DELETE_SUCCESS, "Material", null, res);
 });
 
-module.exports = {
+export {
   getMaterials,
   getMaterial,
   createMaterial,

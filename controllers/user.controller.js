@@ -1,10 +1,10 @@
-const { userModel } = require("../models");
-const { apiResponse, apiError, apiHandler } = require("../utils/apiHandler");
-const { encrypt, generatePassword } = require("../utils/helper").default;
-const { FETCH, EXISTS, INVALID_AUTH } = require("../utils/messages");
-const jwt = require("jsonwebtoken");
-const constants = require("../constants");
-const bcrypt = require("bcrypt");
+import { userModel } from "../models/index.js";
+import { apiResponse, apiError, apiHandler } from "../utils/apiHelper.js";
+import { encrypt, generatePassword } from "../utils/helper.js";
+import messages from "../utils/messages.js";
+import jwt from "jsonwebtoken";
+import constants from "../constants.js";
+import { compare } from "bcrypt";
 
 const getProfile = async (req, res) => {
   let ttest = {
@@ -17,16 +17,23 @@ const getProfile = async (req, res) => {
 const createUser = apiHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
 
-  const existingUser = await userModel.findOne({ email }, { password: 0, refreshToken: 0, OTP: 0 });
+  const existingUser = await userModel.findOne(
+    { email },
+    { password: 0, refreshToken: 0, OTP: 0 }
+  );
 
   if (existingUser) {
-    return apiError(EXISTS, "User with this email", null, res);
+    return apiError(messages.EXISTS, "User with this email", null, res);
   }
 
   let encryptedPassword = await encrypt(password, 10);
 
-  const user = await userModel.create({ fullName, email, password: encryptedPassword });
-  return apiResponse(FETCH, "user", user, res);
+  const user = await userModel.create({
+    fullName,
+    email,
+    password: encryptedPassword,
+  });
+  return apiResponse(messages.FETCH, "user", user, res);
 });
 
 const login = apiHandler(async (req, res) => {
@@ -36,12 +43,12 @@ const login = apiHandler(async (req, res) => {
   const userData = await userModel.findOne({ email });
 
   if (!userData) {
-    return apiError(INVALID_AUTH, null, null, res);
+    return apiError(messages.INVALID_AUTH, null, null, res);
   }
 
-  const isMatch = await bcrypt.compare(password, userData.password);
+  const isMatch = await compare(password, userData.password);
   if (!isMatch) {
-    return apiError(INVALID_AUTH, null, null, res);
+    return apiError(messages.INVALID_AUTH, null, null, res);
   }
   const token = jwt.sign({ id: userData._id }, constants.JWT_SECRET, {
     expiresIn: constants.TOKEN_EXPIRY,
@@ -54,11 +61,7 @@ const login = apiHandler(async (req, res) => {
     token,
   };
 
-  return apiResponse(FETCH, "user", output, res);
+  return apiResponse(messages.FETCH, "user", output, res);
 });
 
-module.exports = {
-  getProfile,
-  createUser,
-  login,
-};
+export { getProfile, createUser, login };

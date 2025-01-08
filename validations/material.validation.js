@@ -21,8 +21,4 @@ const updateMaterialSchema = addMaterialSchema.keys({
   id: idValidation,
 });
 
-export default {
-  getMaterialSchema,
-  addMaterialSchema,
-  updateMaterialSchema,
-};
+export { getMaterialSchema, addMaterialSchema, updateMaterialSchema };

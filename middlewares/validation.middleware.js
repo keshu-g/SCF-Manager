@@ -1,11 +1,11 @@
-const { apiError } = require("../utils/apiHandler");
-const { CUSTOM_ERROR } = require("../utils/messages");
-const { populateMessage } = require("../utils/joiValidationHelper").default;
+import { apiError } from "../utils/apiHelper.js";
+import messages from "../utils/messages.js";
+import { populateMessage } from "../utils/joiValidationHelper.js";
 
 const validate = (schema, type) => (req, res, next) => {
   const { error } = schema.validate(req[type]);
   if (error) {
-    return apiError(CUSTOM_ERROR, populateMessage(error), null, res);
+    return apiError(messages.CUSTOM_ERROR, populateMessage(error), null, res);
   }
   next();
 };
@@ -17,12 +17,9 @@ const validateMultiple = (schema, types) => (req, res, next) => {
   });
   const { error } = schema.validate(validationData);
   if (error) {
-    return apiError(CUSTOM_ERROR, populateMessage(error), null, res);
+    return apiError(messages.CUSTOM_ERROR, populateMessage(error), null, res);
   }
   next();
 };
 
-module.exports = {
-  validate,
-  validateMultiple,
-};
+export { validate, validateMultiple };

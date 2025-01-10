@@ -26,7 +26,23 @@ const createProduct = apiHandler(async (req, res) => {
     return apiError(messages.NOT_FOUND, "Client", null, res);
   }
 
+  const existingProduct = await productModel.findOne({
+    name: productData.name,
+  });
+
+  if (existingProduct) {
+    return apiError(messages.EXISTS, "Product with this name", null, res);
+  }
+
   let materialIds = productData.formula.map((formula) => formula.material);
+  if (materialIds.length !== new Set(materialIds).size) {
+    return apiError(
+      messages.CUSTOM_ERROR,
+      "Product formula contains repeated materials",
+      null,
+      res
+    );
+  }
   materialIds = [...new Set(materialIds)];
 
   const materials = await materialModel.find({ _id: { $in: materialIds } });
@@ -53,6 +69,15 @@ const updateProduct = apiHandler(async (req, res) => {
 
   if (!product) {
     return apiError(messages.NOT_FOUND, "Product", null, res);
+  }
+
+  const existingProduct = await productModel.findOne({
+    name: productData.name,
+    _id: { $ne: productData.id },
+  });
+
+  if (existingProduct) {
+    return apiError(messages.EXISTS, "Product with this name", null, res);
   }
 
   let materialIds = productData.formula.map((formula) => formula.material);
@@ -89,4 +114,48 @@ const deleteProduct = apiHandler(async (req, res) => {
   return apiResponse(messages.DELETE_SUCCESS, "Product", null, res);
 });
 
-export { getProducts, getProduct, createProduct, updateProduct, deleteProduct };
+const manufactureProduct = apiHandler(async (req, res) => {
+  let productId = req.params.id;
+
+  let productData = await productModel.findById(productId);
+
+  if (!productData) {
+    return apiError(messages.NOT_FOUND, "Product", null, res);
+  }
+
+  let materialIds = productData.formula.map((formula) => formula.material);
+
+  let materials = await materialModel.find({ _id: { $in: materialIds } });
+
+  if (materials.length !== materialIds.length) {
+    return apiError(messages.NOT_FOUND, "Material", null, res);
+  }
+
+  for (const formula of productData.formula) {
+    const material = materials.find(
+      (m) => m._id.toString() === formula.material.toString()
+    );
+
+    if (!material) {
+      return apiError(messages.NOT_FOUND, "Material", null, res);
+    }
+
+    if (material.quantity < formula.quantity) {
+      return apiError(messages.INSUFFICIENT_QUANTITY, material.name, null, res);
+    }
+
+    material.quantity -= formula.quantity;
+    await material.save();
+  }
+
+  return apiResponse(messages.UPDATE_SUCCESS, "Material", materials, res);
+});
+
+export {
+  getProducts,
+  getProduct,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  manufactureProduct,
+};

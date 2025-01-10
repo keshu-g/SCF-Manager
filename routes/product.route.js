@@ -6,6 +6,7 @@ import {
   deleteProduct,
   getProducts,
   getProduct,
+  manufactureProduct,
 } from "../controllers/product.controller.js";
 import {
   getProductSchema,
@@ -20,5 +21,10 @@ router.get("/:id", validate(getProductSchema, "params"), getProduct);
 router.post("/", validate(addProductSchema, "body"), createProduct);
 router.put("/", validate(updateProductSchema, "body"), updateProduct);
 router.delete("/:id", validate(getProductSchema, "params"), deleteProduct);
+router.post(
+  "/manufacture/:id",
+  validate(getProductSchema, "params"),
+  manufactureProduct
+);
 
 export default router;

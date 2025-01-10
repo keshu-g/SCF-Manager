@@ -1,4 +1,4 @@
-import { materialModel } from "../models/index.js";
+import { materialModel, productModel } from "../models/index.js";
 import { apiResponse, apiError, apiHandler } from "../utils/apiHelper.js";
 import messages from "../utils/messages.js";
 
@@ -66,6 +66,13 @@ const updateMaterial = apiHandler(async (req, res) => {
 });
 
 const deleteMaterial = apiHandler(async (req, res) => {
+
+  let products = await productModel.find({ "formula.material": req.params.id });
+
+  if (products.length > 0) {
+    return apiError(messages.ITEM_IN_USE, "Material", null, res);
+  }
+
   const materialData = await materialModel.findOneAndDelete({
     _id: req.params.id,
   });

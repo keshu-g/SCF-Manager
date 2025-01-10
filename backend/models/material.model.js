@@ -12,7 +12,7 @@ const materialSchema = new Schema(
       type: String,
       trim: true,
     },
-    totalQuantity: {
+    quantity: {
       type: Number,
       required: true,
       min: [0, "Quantity can not be less than 0"],

@@ -60,7 +60,7 @@ const login = apiHandler(async (req, res) => {
     token,
   };
 
-  return apiResponse(messages.FETCH, "user", output, res);
+  return apiResponse(messages.LOGIN, "user", output, res);
 });
 
 export { getProfile, createUser, login };

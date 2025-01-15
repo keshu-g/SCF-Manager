@@ -1,6 +1,6 @@
 const messages = {
   FETCH: [200, ":item fetched successfully."],
-  LOGIN: [200, "Login successfull."],
+  LOGIN: [200, "Login successful."],
   SUCCESS: [200, ":item sent successfully."],
   ADD_SUCCESS: [200, ":item added successfully."],
   STATUS_SUCCESS: [200, ":item status updated successfully."],
@@ -25,7 +25,7 @@ const messages = {
     400,
     "Password has been used in past, please create a new one",
   ],
-  INVALID_AUTH: [400, "Invalid Email or Password"],
+  INVALID_AUTH: [401, "Invalid Email or Password"],
   INVALID: [400, "Invalid :item."],
   UNAUTHORIZED: [401, ":item is unauthorized. Please login again."],
   FORBIDDEN: [403, ":item does not have access."],

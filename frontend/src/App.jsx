@@ -7,7 +7,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Layout } from "./components";
-import { Dashboard, Material, Client, Formula, Login } from "./pages";
+import { Dashboard, Material, Client, Formula, Login, NotFound } from "./pages";
 import "./index.css";
 import { isTokenValid } from "./utils/helper";
 
@@ -41,6 +41,7 @@ const router = createBrowserRouter(
     <>
       {publicRoutes}
       {privateRoutes}
+      <Route path="*" element={<NotFound />} />
     </>
   )
 );

@@ -1,18 +1,27 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../store/slices/authSlice";
+import { login } from "../store/user/userSlice";
 import { ThemeSwitcher, InputField } from "../components";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [formError, setFormError] = useState(""); // State for form validation errors
 
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error } = useSelector((state) => state.user);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    dispatch(login({ username, password }));
+
+    // Basic validation
+    if (!email.trim() || !password.trim()) {
+      setFormError("Email and password are required.");
+      return;
+    }
+
+    setFormError("");
+    dispatch(login({ email, password }));
   };
 
   return (
@@ -28,12 +37,12 @@ const Login = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <InputField
-            id="username"
-            label="Username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your username"
+            id="Email"
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your Email"
           />
           <InputField
             id="password"
@@ -44,7 +53,12 @@ const Login = () => {
             placeholder="Enter your password"
             isPassword={true}
           />
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+          {/* Display validation or API error */}
+          {(formError || error) && (
+            <p className="text-red-500 text-sm">{formError || error}</p>
+          )}
+
           <button
             type="submit"
             disabled={loading}

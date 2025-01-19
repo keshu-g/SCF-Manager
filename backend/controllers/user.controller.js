@@ -7,13 +7,17 @@ import constants from "../constants.js";
 import { compare } from "bcrypt";
 
 const getProfile = async (req, res) => {
-  let ttest = {
-    name: "test",
-    email: "test",
-  };
+  const { id } = req.user.id;
 
-  return apiResponse(messages.FETCH, "user", ttest, res);
+  const userData = await userModel.findbyId(id);
+
+  if (!userData) {
+    return apiError(messages.NOT_FOUND, "User", null, res);
+  }
+
+  return apiResponse(messages.FETCH, "user", userData, res);
 };
+
 const createUser = apiHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
 

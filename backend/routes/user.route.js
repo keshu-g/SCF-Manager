@@ -11,7 +11,7 @@ import {
   login,
 } from "../controllers/user.controller.js";
 
-router.get("/test", getProfile);
+router.get("/profile", getProfile);
 router.post("/", validate(addUserBodySchema, "body"), createUser);
 router.post("/login", validate(loginUserSchema, "body"), login);
 

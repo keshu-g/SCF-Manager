@@ -1,27 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../store/user/userSlice";
 import { ThemeSwitcher, InputField } from "../components";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { isTokenValid } from "../utils/helper";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [formError, setFormError] = useState(""); // State for form validation errors
+  const [formError, setFormError] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token && isTokenValid(token)) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.user);
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!email.trim() || !password.trim()) {
       setFormError("Email and password are required.");
       return;
     }
 
     setFormError("");
-    dispatch(login({ email, password }));
+
+    dispatch(login({ email, password }))
+      .unwrap()
+      .then((response) => {
+        toast.success(response.message);
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      })
+      .catch((err) => {
+        toast.error(err || "Login failed. Please try again.");
+      });
   };
 
   return (
@@ -37,7 +59,7 @@ const Login = () => {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <InputField
-            id="Email"
+            id="email"
             label="Email"
             type="email"
             value={email}
@@ -54,9 +76,8 @@ const Login = () => {
             isPassword={true}
           />
 
-          {/* Display validation or API error */}
-          {(formError || error) && (
-            <p className="text-red-500 text-sm">{formError || error}</p>
+          {formError && (
+            <p className="text-red-500 text-sm text-center">{formError}</p>
           )}
 
           <button

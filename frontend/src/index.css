@@ -12,12 +12,31 @@ body {
 :root {
   --background-color-light: #ffffff;
   --background-color-dark: #1b1b1d;
+
+  --text-color-light: #1e1e20;
+  --text-color-dark: #e4e4e6;
 }
 
 html {
   background-color: var(--background-color-light);
+  color: var(--text-color-light);
 }
 
 html.dark {
   background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
+}
+
+.toastBody {
+  font-family: "Lexend", sans-serif !important;
+  color: var(--text-color-light);
+  background-color: var(--background-color-light) !important;
+  border: 1px solid #d4d4d6;
+  border-radius: 5px;
+}
+
+.dark .toastBody {
+  color: var(--text-color-dark);
+  background-color: var(--background-color-dark) !important;
+  border: 1px solid #5f5f60;
 }

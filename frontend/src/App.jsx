@@ -7,21 +7,30 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Layout } from "./components";
-import { Material, Client, Formula, Login } from "./pages";
+import { Dashboard, Material, Client, Formula, Login } from "./pages";
 import "./index.css";
+import { isTokenValid } from "./utils/helper";
 
 const PrivateRoute = ({ element }) => {
-  // const { isAuthenticated } = useSelector((state) => state.auth);
-  let isAuthenticated = false;
+  const token = localStorage.getItem("token");
 
-  return isAuthenticated ? element : <Navigate to="/login" replace />;
+  const isAuthenticated = Boolean(token) && isTokenValid(token);
+
+  console.log("isAuthenticated", isAuthenticated, token);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return element;
 };
 
 const publicRoutes = <Route path="/login" element={<Login />} />;
 
 const privateRoutes = (
   <Route path="/" element={<Layout />}>
-    <Route index element={<PrivateRoute element={<Material />} />} />
+    <Route index element={<PrivateRoute element={<Dashboard />} />} />
+    <Route path="/material" element={<PrivateRoute element={<Material />} />} />
     <Route path="/client" element={<PrivateRoute element={<Client />} />} />
     <Route path="/formula" element={<PrivateRoute element={<Formula />} />} />
   </Route>

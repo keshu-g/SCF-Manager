@@ -5,15 +5,20 @@ export const login = createAsyncThunk(
   "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/v1/users/login", { email, password });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BE_BASE_URL}/api/v1/users/login`,
+        { email, password }
+      );
+
+      localStorage.setItem("token", response.data.data.token);
       return response.data;
     } catch (error) {
-      // Use rejectWithValue to handle errors gracefully
-      return rejectWithValue(error.response?.data?.message || "Something went wrong");
+      return rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
-
 
 const userSlice = createSlice({
   name: "user",
@@ -37,7 +42,7 @@ const userSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
-        state.error = action.payload; // Use payload from rejectWithValue
+        state.error = action.payload;
       });
   },
 });

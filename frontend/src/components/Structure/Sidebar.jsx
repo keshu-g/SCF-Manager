@@ -1,5 +1,5 @@
 import React from "react";
-import { Atom, LogInIcon, PanelLeftClose, Pi, UserCog } from "lucide-react";
+import { Atom, LogInIcon, PanelLeftClose, Pi, UserCog, LineChartIcon } from "lucide-react";
 import { SidebarItem, Line } from "./index";
 
 const Sidebar = ({ isSidebarCollapsed, closeSidebar }) => (
@@ -31,6 +31,12 @@ const Sidebar = ({ isSidebarCollapsed, closeSidebar }) => (
           <ul className="mt-4 space-y-2 font-medium">
             <SidebarItem
               to="/"
+              icon={LineChartIcon}
+              label="Dashboard"
+              onClick={closeSidebar}
+            />
+            <SidebarItem
+              to="/material"
               icon={Atom}
               label="Materials"
               onClick={closeSidebar}

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../store/user/userSlice";
+import { useLoginUserMutation } from "../redux/api/userApiSlice";
 import { ThemeSwitcher, InputField } from "../components";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { isTokenValid } from "../utils/helper";
+import { setUser } from "../redux/features/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,8 +20,8 @@ const Login = () => {
     }
   }, [navigate]);
 
-  const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.user);
+  const [loginUser, { isLoading, isSuccess, isError, data, error }] =
+    useLoginUserMutation();
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -33,18 +33,30 @@ const Login = () => {
 
     setFormError("");
 
-    dispatch(login({ email, password }))
-      .unwrap()
-      .then((response) => {
-        toast.success(response.message);
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((err) => {
-        toast.error(err || "Login failed. Please try again.");
-      });
+    loginUser({ email, password });
   };
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.data?.message || "Login failed. Please try again.");
+    }
+    if (isSuccess) {
+      toast.success(data?.message || "Login success, redirecting...");
+      localStorage.setItem("token", data?.data?.token || "");
+
+      const user = {
+        user: data?.data?.user || null,
+        token: data?.data?.token || null,
+        isAuthenticated: true,
+      };
+
+      setUser(user);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    }
+  }, [isError, isSuccess, error, navigate]);
 
   return (
     <div className="h-dvh flex justify-center items-center bg-primary-bg dark:bg-dark-primary-bg transition-all duration-300 px-6 sm:px-8">
@@ -82,10 +94,10 @@ const Login = () => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isLoading}
             className="w-full py-2 sm:py-3 px-3 sm:px-4 text-sm sm:text-base rounded-lg bg-accent-color hover:bg-dark-secondary-bg dark:bg-dark-accent-color dark:hover:bg-dark-secondary-bg text-white transition-all duration-300"
           >
-            {loading ? "Logging in..." : "Login"}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

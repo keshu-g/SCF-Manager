@@ -5,9 +5,16 @@ export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BE_BASE_URL,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
-  tagTypes: ["User"], // Tags for caching and invalidation
-  endpoints: () => ({}), // Will be extended by feature-specific slices
+  tagTypes: ["User"],
+  endpoints: () => ({}),
 });
 
 export default apiSlice;

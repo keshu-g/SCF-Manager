@@ -1,31 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Route,
-  createBrowserRouter,
-  createRoutesFromElements,
-  RouterProvider,
+  BrowserRouter as Router,
+  Routes,
   Navigate,
 } from "react-router-dom";
 import { Layout } from "./components";
 import { Dashboard, Material, Client, Formula, Login, NotFound } from "./pages";
-import "./index.css";
+import { useDispatch } from "react-redux";
 import { isTokenValid } from "./utils/helper";
+import { setUser, logout } from "./redux/features/userSlice";
+import { useFetchProfileQuery } from "./redux/api/userApiSlice";
 
-const PrivateRoute = ({ element }) => {
+const useAuth = () => {
+  const dispatch = useDispatch();
   const token = localStorage.getItem("token");
+  const { data, error, isLoading } = useFetchProfileQuery();
 
-  const isAuthenticated = Boolean(token) && isTokenValid(token);
+  useEffect(() => {
+    if (data && isTokenValid(token)) {
+      dispatch(setUser({ token, user: data.data }));
+    } else if (error) {
+      localStorage.removeItem("token");
+      dispatch(logout());
+    }
+  }, [dispatch, data, error, token]);
 
-  console.log("isAuthenticated", isAuthenticated, token);
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return element;
+  return { isAuthenticated: !!token && isTokenValid(token), isLoading };
 };
 
-const publicRoutes = <Route path="/login" element={<Login />} />;
+const PrivateRoute = ({ element }) => {
+  const { isAuthenticated } = useAuth();
+
+  return isAuthenticated ? element : <Navigate to="/login" />;
+};
 
 const privateRoutes = (
   <Route path="/" element={<Layout />}>
@@ -36,18 +44,16 @@ const privateRoutes = (
   </Route>
 );
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <>
-      {publicRoutes}
-      {privateRoutes}
-      <Route path="*" element={<NotFound />} />
-    </>
-  )
-);
-
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<NotFound />} />
+        {privateRoutes}
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

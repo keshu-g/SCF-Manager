@@ -4,7 +4,6 @@ import { ThemeSwitcher, InputField } from "../components";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { isTokenValid } from "../utils/helper";
-import { setUser } from "../redux/features/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -43,14 +42,6 @@ const Login = () => {
     if (isSuccess) {
       toast.success(data?.message || "Login success, redirecting...");
       localStorage.setItem("token", data?.data?.token || "");
-
-      const user = {
-        user: data?.data?.user || null,
-        token: data?.data?.token || null,
-        isAuthenticated: true,
-      };
-
-      setUser(user);
 
       setTimeout(() => {
         navigate("/");

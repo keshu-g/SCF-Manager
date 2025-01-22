@@ -1,4 +1,4 @@
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export const isTokenValid = (token) => {
   if (!token) return false;
@@ -16,6 +16,7 @@ export const isTokenValid = (token) => {
 
     return true;
   } catch (error) {
+    console.log("Error in isTokenValid : ",error);
     return false;
   }
 };

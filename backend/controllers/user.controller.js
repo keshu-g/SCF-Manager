@@ -8,8 +8,8 @@ import { compare } from "bcrypt";
 
 const getProfile = async (req, res) => {
   const id = req.user._id;
-  
-  const userData = await userModel.findById(id);
+
+  const userData = await userModel.findById(id).select("-password --v");
 
   if (!userData) {
     return apiError(messages.NOT_FOUND, "User", null, res);

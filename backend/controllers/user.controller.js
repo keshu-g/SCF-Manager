@@ -7,9 +7,9 @@ import constants from "../constants.js";
 import { compare } from "bcrypt";
 
 const getProfile = async (req, res) => {
-  const { id } = req.user.id;
-
-  const userData = await userModel.findbyId(id);
+  const id = req.user._id;
+  
+  const userData = await userModel.findById(id);
 
   if (!userData) {
     return apiError(messages.NOT_FOUND, "User", null, res);

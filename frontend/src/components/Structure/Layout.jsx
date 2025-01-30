@@ -18,14 +18,15 @@ const Layout = () => {
 
   const location = useLocation();
   const getPageName = () => {
-    switch (location.pathname) {
-      case "/users":
-        return "Users";
-      case "/login":
-        return "Login";
-      default:
-        return "Dashboard";
+    let pageNames = {
+      "/": "Dashboard",
+      "/material": "Materials",
+      "/client": "Clients",
+      "/formula": "Formula",
+      "/user": "Users",
     }
+
+    return pageNames[location.pathname] || "??????";
   };
 
   // useEffect(() => {
@@ -68,7 +69,7 @@ const Layout = () => {
         </header>
 
         {/* Main Content */}
-        <main>
+        <main className="overflow-y-auto w-screen scrollbar-custom">
           <Outlet />
         </main>
       </div>

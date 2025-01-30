@@ -40,3 +40,28 @@ html.dark {
   background-color: var(--background-color-dark) !important;
   border: 1px solid #5f5f60;
 }
+
+::-webkit-scrollbar {
+  width: 8px; 
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f4f5f6e6;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e91e63;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d01755;
+}
+
+/* Firefox Scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #e91e63 #f4f5f6e6;
+}

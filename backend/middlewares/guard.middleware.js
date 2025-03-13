@@ -1,12 +1,7 @@
 import jwt from "jsonwebtoken";
 import { apiError, apiHandler } from "../utils/apiHelper.js";
-
 import constants from "../constants.js";
-const { JWT_SECRET } = constants;
-
 import messages from "../utils/messages.js";
-const { UNAUTHORIZED } = messages;
-
 import { userModel } from "../models/index.js";
 
 const authGuard = apiHandler(async (req, res, next) => {
@@ -16,20 +11,25 @@ const authGuard = apiHandler(async (req, res, next) => {
     return next();
   }
 
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const token = req.cookies.accessToken;
   if (!token) {
-    return apiError(UNAUTHORIZED, "Missing authorization token", null, res);
+    return apiError(messages.UNAUTHORIZED, "User", null, res);
   }
 
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, JWT_SECRET);
+    decodedToken = jwt.verify(token, constants.ACCESS_SECRET);
   } catch (error) {
     console.error("JWT verification failed:", error);
-    return apiError(UNAUTHORIZED, "Invalid or expired token", null, res);
+    return apiError(
+      messages.UNAUTHORIZED,
+      "Invalid or expired token",
+      null,
+      res
+    );
   }
 
-  const existingUser = await userModel.findById(decodedToken.id, {
+  const existingUser = await userModel.findById(decodedToken.userId, {
     password: 0,
     refreshToken: 0,
     OTP: 0,
@@ -43,6 +43,4 @@ const authGuard = apiHandler(async (req, res, next) => {
   next();
 });
 
-export {
-  authGuard,
-};
+export { authGuard };

@@ -3,7 +3,7 @@ import {
   stringValidation,
   idValidation,
   numberValidation,
-} from "../utils/joiValidationHelper.js";
+} from "../utils/joi.util.js";
 
 const getProductSchema = joi.object({
   id: idValidation,

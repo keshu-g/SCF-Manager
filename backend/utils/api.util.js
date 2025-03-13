@@ -1,5 +1,5 @@
 import _ from "lodash";
-import messages from "./messages.js";
+import messages from "./messages.util.js";
 
 const apiHandler = (requestHandler) => {
   return async (req, res, next) => {

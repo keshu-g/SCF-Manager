@@ -2,7 +2,7 @@ import joi from "joi";
 import {
   stringValidation,
   idValidation,
-} from "../utils/joiValidationHelper.js";
+} from "../utils/joi.util.js";
 
 const getClientSchema = joi.object({
   id: idValidation,

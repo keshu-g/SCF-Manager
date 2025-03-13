@@ -1,6 +1,6 @@
-import { apiError } from "../utils/apiHelper.js";
-import messages from "../utils/messages.js";
-import { populateMessage } from "../utils/joiValidationHelper.js";
+import { apiError } from "../utils/api.util.js";
+import messages from "../utils/messages.util.js";
+import { populateMessage } from "../utils/joi.util.js";
 
 const validate = (schema, type) => (req, res, next) => {
   const { error } = schema.validate(req[type]);

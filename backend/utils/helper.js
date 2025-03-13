@@ -5,6 +5,7 @@ const {
 } = _mongoose;
 import { genSalt, hash } from "bcrypt";
 import _ from "lodash";
+import constants from "../constants.js";
 
 const toObjectId = (entryId) => {
   if (Array.isArray(entryId)) {
@@ -55,5 +56,23 @@ const generatePassword = (
 
   return password;
 };
+const generateAccessToken = (user) => {
+  return jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
+  });
+};
 
-export { toObjectId, isValidObjId, encrypt, generatePassword };
+const generateRefreshToken = (user) => {
+  jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+  });
+};
+
+export {
+  toObjectId,
+  isValidObjId,
+  encrypt,
+  generatePassword,
+  generateAccessToken,
+  generateRefreshToken,
+};

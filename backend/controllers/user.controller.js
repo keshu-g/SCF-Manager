@@ -1,12 +1,12 @@
 import { userModel } from "../models/index.js";
-import { apiResponse, apiError, apiHandler } from "../utils/apiHelper.js";
+import { apiResponse, apiError, apiHandler } from "../utils/api.util.js";
 import {
   encrypt,
   generatePassword,
   generateAccessToken,
   generateRefreshToken,
-} from "../utils/helper.js";
-import messages from "../utils/messages.js";
+} from "../utils/helper.util.js";
+import messages from "../utils/messages.util.js";
 import jwt from "jsonwebtoken";
 import constants from "../constants.js";
 import { compare } from "bcrypt";

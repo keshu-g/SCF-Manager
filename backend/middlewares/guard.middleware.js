@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { apiError, apiHandler } from "../utils/apiHelper.js";
+import { apiError, apiHandler } from "../utils/api.util.js";
 import constants from "../constants.js";
-import messages from "../utils/messages.js";
+import messages from "../utils/messages.util.js";
 import { userModel } from "../models/index.js";
 
 const authGuard = apiHandler(async (req, res, next) => {

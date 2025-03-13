@@ -9,10 +9,14 @@ import {
   getProfile,
   createUser,
   login,
+  logout,
+  refreshToken,
 } from "../controllers/user.controller.js";
 
 router.get("/profile", getProfile);
 router.post("/", validate(addUserBodySchema, "body"), createUser);
 router.post("/login", validate(loginUserSchema, "body"), login);
+router.post("/logout", logout);
+router.post("/refresh", refreshToken);
 
 export default router;

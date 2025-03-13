@@ -32,5 +32,5 @@ if (NODE_ENV === "production") {
     res.sendFile(resolve(__dirname, "client", "build", "index.html"));
   });
 } else {
-  app.get("/", (req, res) => res.send(`ReBudget is running on port: ${PORT}`));
+  app.get("/", (req, res) => res.send(`SCF Manager is running on port: ${PORT}`));
 }

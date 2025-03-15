@@ -1,6 +1,6 @@
 import { materialModel, productModel } from "../models/index.js";
-import { apiResponse, apiError, apiHandler } from "../utils/apiHelper.js";
-import messages from "../utils/messages.js";
+import { apiResponse, apiError, apiHandler } from "../utils/api.util.js";
+import messages from "../utils/messages.util.js";
 
 const getMaterials = apiHandler(async (req, res) => {
   const materials = await materialModel.find();

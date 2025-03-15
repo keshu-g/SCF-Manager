@@ -1,6 +1,7 @@
 const messages = {
   FETCH: [200, ":item fetched successfully."],
   LOGIN: [200, "Login successful."],
+  LOGOUT: [200, "Logout successful."],
   SUCCESS: [200, ":item sent successfully."],
   ADD_SUCCESS: [200, ":item added successfully."],
   STATUS_SUCCESS: [200, ":item status updated successfully."],

@@ -1,7 +1,7 @@
 import joi from "joi";
-import regex from "./regex.js";
+import regex from "./regex.util.js";
 const { PASSWORD, PHONE_NUMBER } = regex;
-import { toObjectId, isValidObjId } from "./helper.js";
+import { toObjectId, isValidObjId } from "./helper.util.js";
 import _ from "lodash";
 
 const joiMessages = {

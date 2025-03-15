@@ -1,7 +1,12 @@
 import { userModel } from "../models/index.js";
-import { apiResponse, apiError, apiHandler } from "../utils/apiHelper.js";
-import { encrypt, generatePassword } from "../utils/helper.js";
-import messages from "../utils/messages.js";
+import { apiResponse, apiError, apiHandler } from "../utils/api.util.js";
+import {
+  encrypt,
+  generatePassword,
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utils/helper.util.js";
+import messages from "../utils/messages.util.js";
 import jwt from "jsonwebtoken";
 import constants from "../constants.js";
 import { compare } from "bcrypt";
@@ -53,18 +58,61 @@ const login = apiHandler(async (req, res) => {
   if (!isMatch) {
     return apiError(messages.INVALID_AUTH, null, null, res);
   }
-  const token = jwt.sign({ id: userData._id }, constants.JWT_SECRET, {
-    expiresIn: constants.TOKEN_EXPIRY,
+  // const token = jwt.sign({ id: userData._id }, constants.JWT_SECRET, {
+  //   expiresIn: constants.TOKEN_EXPIRY,
+  // });
+
+  const accessToken = generateAccessToken(userData._id);
+  const refreshToken = generateRefreshToken(userData._id);
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict",
+    maxAge: 15 * 60 * 1000, // 15 minutes
   });
 
-  let output = {
-    id: userData._id,
-    fullName: userData.fullName,
-    email: userData.email,
-    token,
-  };
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
 
-  return apiResponse(messages.LOGIN, "user", output, res);
+  return apiResponse(messages.LOGIN, "user", null, res);
 });
 
-export { getProfile, createUser, login };
+const logout = apiHandler(async (req, res) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  return apiResponse(messages.LOGOUT, "user", null, res);
+});
+
+const refreshToken = apiHandler(async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return apiError(messages.INVALID_AUTH, null, null, res);
+  }
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(refreshToken, constants.REFRESH_SECRET);
+  } catch (error) {
+    console.error("JWT verification failed:", error);
+    return apiError(messages.INVALID_AUTH, null, null, res);
+  }
+
+  const userId = decodedToken.userId;
+  const accessToken = generateAccessToken(userId);
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict",
+    maxAge: 15 * 60 * 1000, // 15 minutes
+  });
+
+  return apiResponse(messages.CUSTOM_SUCCESS, "Token refreshed successfully", null, res);
+});
+
+export { getProfile, createUser, login, logout, refreshToken };

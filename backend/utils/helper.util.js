@@ -6,6 +6,7 @@ const {
 import { genSalt, hash } from "bcrypt";
 import _ from "lodash";
 import constants from "../constants.js";
+import jwt from "jsonwebtoken";
 
 const toObjectId = (entryId) => {
   if (Array.isArray(entryId)) {
@@ -62,9 +63,9 @@ const generateAccessToken = (user) => {
   });
 };
 
-const generateRefreshToken = (user) => {
-  jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
+const generateRefreshToken = (userId) => {
+  return jwt.sign({ userId: userId }, constants.REFRESH_SECRET, {
+    expiresIn: constants.REFRESH_SECRET_EXPIRY,
   });
 };
 

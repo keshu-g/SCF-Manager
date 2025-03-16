@@ -3,12 +3,15 @@ import { apiResponse, apiError, apiHandler } from "../utils/api.util.js";
 import messages from "../utils/messages.util.js";
 
 const getMaterials = apiHandler(async (req, res) => {
-  const materials = await materialModel.find();
+  const materials = await materialModel.find({ status: "ACTIVE" });
   return apiResponse(messages.FETCH, "Materials", materials, res);
 });
 
 const getMaterial = apiHandler(async (req, res) => {
-  const material = await materialModel.findOne({ _id: req.params.id });
+  const material = await materialModel.findOne({
+    _id: req.params.id,
+    status: "ACTIVE",
+  });
 
   if (!material) {
     return apiError(messages.NOT_FOUND, "Material", null, res);
@@ -37,7 +40,10 @@ const createMaterial = apiHandler(async (req, res) => {
 const updateMaterial = apiHandler(async (req, res) => {
   const materialData = req.body;
 
-  const material = await materialModel.findOne({ _id: materialData.id });
+  const material = await materialModel.findOne({
+    _id: materialData.id,
+    status: "ACTIVE",
+  });
 
   if (!material) {
     return apiError(messages.NOT_FOUND, "Material", null, res);
@@ -66,16 +72,24 @@ const updateMaterial = apiHandler(async (req, res) => {
 });
 
 const deleteMaterial = apiHandler(async (req, res) => {
-
   let products = await productModel.find({ "formula.material": req.params.id });
 
   if (products.length > 0) {
     return apiError(messages.ITEM_IN_USE, "Material", null, res);
   }
 
-  const materialData = await materialModel.findOneAndDelete({
-    _id: req.params.id,
-  });
+  const materialData = await materialModel.findOneAndUpdate(
+    {
+      _id: req.params.id,
+      status: "ACTIVE",
+    },
+    {
+      $set: {
+        status: "DELETED",
+        updatedBy: req.user._id,
+      },
+    }
+  );
 
   if (!materialData) {
     return apiError(messages.NOT_FOUND, "Material", null, res);

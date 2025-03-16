@@ -5,7 +5,7 @@ import messages from "../utils/messages.util.js";
 import { userModel } from "../models/index.js";
 
 const authGuard = apiHandler(async (req, res, next) => {
-  const openRoutes = ["/users/test", "/users/login"];
+  const openRoutes = ["/user/test", "/user/login", "/user/refresh"];
 
   if (openRoutes.some((route) => req.url.startsWith(route))) {
     return next();
@@ -36,7 +36,7 @@ const authGuard = apiHandler(async (req, res, next) => {
   });
 
   if (!existingUser) {
-    return apiError(UNAUTHORIZED, "User not found", null, res);
+    return apiError(messages.UNAUTHORIZED, "User", null, res);
   }
 
   req.user = existingUser;

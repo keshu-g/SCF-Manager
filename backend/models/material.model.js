@@ -17,6 +17,11 @@ const materialSchema = new Schema(
       required: true,
       min: [0, "Quantity can not be less than 0"],
     },
+    status: {
+      type: String,
+      enum: ["ACTIVE", "DELETED"],
+      default: "ACTIVE",
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

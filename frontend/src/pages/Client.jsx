@@ -1,10 +1,12 @@
-import React from 'react'
+import React from "react";
+import { Separator } from "../components/ui/separator";
 
 const Client = () => {
-  console.log("Client");
   return (
-    <div>Client</div>
-  )
-}
+    <div>
+      <Separator orientation="vertical" className="m-5"/>
+    </div>
+  );
+};
 
-export default Client
+export default Client;

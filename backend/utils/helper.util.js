@@ -57,7 +57,6 @@ const generatePassword = (
 
   return password;
 };
-
 const generateAccessToken = (userId) => {
   return jwt.sign({ userId: userId }, constants.ACCESS_SECRET, {
     expiresIn: constants.ACCESS_SECRET_EXPIRY,

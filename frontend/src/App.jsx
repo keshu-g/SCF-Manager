@@ -1,11 +1,15 @@
-import React from 'react';
-import AppRoutes from './routes/AppRoutes';
+import React from "react";
+import AppRoutes from "./routes/AppRoutes";
+import { ThemeProvider } from "./components/theme-provider";
+import { Toaster } from "@/components/ui/sonner"
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-base-200 text-base-content">
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <AppRoutes />
-    </div>
+      <Toaster position="top-right" richColors closeButton />
+    </ThemeProvider>
+
   );
 };
 

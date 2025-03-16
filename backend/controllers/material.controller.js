@@ -23,9 +23,11 @@ const getMaterial = apiHandler(async (req, res) => {
 const createMaterial = apiHandler(async (req, res) => {
   const materialData = req.body;
 
-  const existingMaterial = await materialModel.findOne({
-    name: materialData.name,
-  });
+  const existingMaterial = await materialModel
+    .findOne({
+      name: materialData.name,
+    })
+    .collation({ locale: "en", strength: 2 });
 
   if (existingMaterial) {
     return apiError(messages.EXISTS, "Material with this name", null, res);
@@ -49,10 +51,12 @@ const updateMaterial = apiHandler(async (req, res) => {
     return apiError(messages.NOT_FOUND, "Material", null, res);
   }
 
-  const existingMaterial = await materialModel.findOne({
-    name: materialData.name,
-    _id: { $ne: materialData.id },
-  });
+  const existingMaterial = await materialModel
+    .findOne({
+      name: materialData.name,
+      _id: { $ne: materialData.id },
+    })
+    .collation({ locale: "en", strength: 2 });
 
   if (existingMaterial) {
     return apiError(messages.EXISTS, "Material with this name", null, res);

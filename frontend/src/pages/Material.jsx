@@ -2,6 +2,7 @@ import { useMemo, useCallback } from "react";
 import {
   useGetMaterialsQuery,
   useDeleteMaterialMutation,
+  useUpdateMaterialMutation,
 } from "../features/material/materialApi";
 import DataTable from "../components/data-table";
 import { MoreHorizontal, InfoIcon } from "lucide-react";
@@ -24,6 +25,7 @@ import DataTableColumnHeader from "@/components/data-table-column-header";
 import LoadingScreen from "@/components/loading-screen";
 import { toast } from "sonner";
 import ConfirmDialog from "@/components/confirm-dialog";
+import EditSheet from "@/components/edit-sheet";
 
 const Material = () => {
   const {
@@ -34,6 +36,7 @@ const Material = () => {
     refetch,
   } = useGetMaterialsQuery();
   const [deleteMaterial] = useDeleteMaterialMutation();
+  const [updateMaterial] = useUpdateMaterialMutation();
 
   const handleCopyID = useCallback((id) => {
     navigator.clipboard.writeText(id);
@@ -50,6 +53,27 @@ const Material = () => {
       }
     },
     [deleteMaterial, refetch]
+  );
+
+  const handleUpdate = useCallback(
+    async (updatedMaterial) => {
+      try {
+        console.log("updatedMaterial : ", updatedMaterial);
+
+        let updatedData = {
+          id: updatedMaterial._id,
+          name: updatedMaterial.name,
+          quantity: updatedMaterial.quantity,
+          description: updatedMaterial.description,
+        };
+        const response = await updateMaterial(updatedData).unwrap();
+        toast.success(response.message || "Material updated successfully");
+        refetch();
+      } catch (error) {
+        toast.error(error?.data?.message || "Failed to update material");
+      }
+    },
+    [updateMaterial, refetch]
   );
 
   const columns = useMemo(() => {
@@ -128,7 +152,35 @@ const Material = () => {
                   Copy Material ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Edit material</DropdownMenuItem>
+                <div className="focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground">
+                  <EditSheet
+                    title="Edit Material"
+                    description="Update material details here."
+                    fields={[
+                      { label: "ID", name: "_id", type: "hidden" }, // Ensure ID is passed
+                      {
+                        label: "Name",
+                        name: "name",
+                        type: "text",
+                        required: true,
+                      },
+                      {
+                        label: "Quantity",
+                        name: "quantity",
+                        type: "number",
+                        required: true,
+                      },
+                      {
+                        label: "Description",
+                        name: "description",
+                        type: "textarea"
+                      },
+                    ]}
+                    data={material}
+                    onSubmit={handleUpdate}
+                    triggerLabel="Edit Material"
+                  />
+                </div>
                 <ConfirmDialog
                   renderTrigger={
                     <DropdownMenuItem
@@ -156,7 +208,7 @@ const Material = () => {
         );
       },
     };
-  }, [handleCopyID, handleDelete]);
+  }, [handleCopyID, handleDelete, handleUpdate]);
 
   const finalColumns = useMemo(
     () => [...columns, actionColumn],

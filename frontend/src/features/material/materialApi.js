@@ -18,7 +18,7 @@ export const materialApi = apiSlice.injectEndpoints({
     }),
     updateMaterial: builder.mutation({
       query: (data) => ({
-        url: `/material/${data.id}`,
+        url: `/material`,
         method: "PUT",
         body: data,
       }),

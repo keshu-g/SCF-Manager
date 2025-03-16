@@ -12,7 +12,7 @@ const getMaterialSchema = joi.object({
 const addMaterialSchema = joi
   .object({
     name: stringValidation,
-    description: stringValidation,
+    description: stringValidation.optional().allow(""),
     quantity: numberValidation,
   })
   .unknown(false);

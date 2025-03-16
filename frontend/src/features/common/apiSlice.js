@@ -17,7 +17,9 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     console.log("🔴 Unauthorized! Trying to refresh...");
 
     // Try refreshing the session
-    const refreshResult = await baseQuery("/user/refresh", api, extraOptions);
+    const refreshResult = await baseQuery("/user/refresh", api, {
+      method: "POST",
+    });
     console.log("🔄 Refresh Response:", refreshResult);
 
     if (refreshResult.data) {

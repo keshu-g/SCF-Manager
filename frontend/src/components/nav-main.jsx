@@ -16,16 +16,26 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useLocation } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import { act } from "react";
 
 export function NavMain({ items }) {
+  const location = useLocation();
   return (
     <SidebarGroup className="group-data-[collapsible=icon]">
       <SidebarGroupLabel>Master Data</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton
+              asChild
+              className={
+                location.pathname === item.url
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : ""
+              }
+            >
               <NavLink to={item.url}>
                 <item.icon />
                 <span>{item.name}</span>

@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import {
   BookOpen,
   Bot,
@@ -10,20 +10,20 @@ import {
   BookUserIcon,
   SquareSigma,
   ComponentIcon,
-  SquareSigmaIcon
-} from "lucide-react"
+  SquareSigmaIcon,
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 // This is sample data.
 const data = {
@@ -37,7 +37,7 @@ const data = {
       name: "SCF Manager",
       logo: GalleryVerticalEnd,
       plan: "Admin",
-    }
+    },
   ],
   // navMain: [
   //   {
@@ -128,6 +128,11 @@ const data = {
   // ],
   navMain: [
     {
+      name: "Dashboard",
+      url: "/dashboard",
+      icon: Atom,
+    },
+    {
       name: "Material",
       url: "/material",
       icon: ComponentIcon,
@@ -143,13 +148,11 @@ const data = {
       icon: BookUserIcon,
     },
   ],
-}
+};
 
-export function AppSidebar({
-  ...props
-}) {
+export function AppSidebar({ ...props }) {
   return (
-    (<Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
@@ -161,6 +164,6 @@ export function AppSidebar({
         <NavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
-    </Sidebar>)
+    </Sidebar>
   );
 }

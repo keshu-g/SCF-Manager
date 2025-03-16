@@ -32,7 +32,6 @@ export default function DataTable({ columns, data }) {
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  // Memoized data to avoid unnecessary renders
   const memoizedData = React.useMemo(() => data, [data]);
 
   const table = useReactTable({
@@ -54,7 +53,6 @@ export default function DataTable({ columns, data }) {
     },
   });
 
-  // Memoized event handlers to prevent unnecessary re-renders
   const setGlobalFilterHandler = React.useCallback(
     (event) => setGlobalFilter(event.target.value),
     []

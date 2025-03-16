@@ -1,5 +1,8 @@
 import { useMemo, useCallback } from "react";
-import { useGetMaterialsQuery } from "../features/material/materialApi";
+import {
+  useGetMaterialsQuery,
+  useDeleteMaterialMutation,
+} from "../features/material/materialApi";
 import DataTable from "../components/data-table";
 import { MoreHorizontal, InfoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,23 +23,37 @@ import {
 import DataTableColumnHeader from "@/components/data-table-column-header";
 import LoadingScreen from "@/components/loading-screen";
 import { toast } from "sonner";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 const Material = () => {
-  const { data: materials, isLoading, isError, error } = useGetMaterialsQuery();
+  const {
+    data: materials,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetMaterialsQuery();
+  const [deleteMaterial] = useDeleteMaterialMutation();
 
-  // Memoized function for copying Material ID
   const handleCopyID = useCallback((id) => {
     navigator.clipboard.writeText(id);
   }, []);
 
-  // Memoized function for handling delete
-  const handleDelete = useCallback((material) => {
-    console.log(material);
-  }, []);
+  const handleDelete = useCallback(
+    async (material) => {
+      try {
+        const response = await deleteMaterial(material._id).unwrap(); // Ensure we get API response
+        toast.success(response.message || "Material deleted successfully"); // Show API message
+        refetch();
+      } catch (error) {
+        toast.error(error?.data?.message || "Failed to delete material"); // Show API error message
+      }
+    },
+    [deleteMaterial, refetch]
+  );
 
-  // Memoized table columns to prevent unnecessary re-renders
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    return [
       {
         accessorKey: "name",
         header: ({ column }) => (
@@ -57,7 +74,6 @@ const Material = () => {
             style: "unit",
             unit: "kilogram",
           }).format(quantity);
-
           return <div className="pr-4 text-right font-medium">{formatted}</div>;
         },
       },
@@ -81,65 +97,85 @@ const Material = () => {
           );
         },
       },
-      {
-        id: "actions",
-        cell: ({ row }) => {
-          const material = row.original;
+    ];
+  }, []);
 
-          return (
-            <div className="flex justify-end -ml-4">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <InfoIcon className="h-4 w-6" />
-                  </TooltipTrigger>
-                  <TooltipContent>{material.description}</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-6 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
-                    <MoreHorizontal className="h-6 w-6" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => handleCopyID(material._id)}>
-                    Copy Material ID
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Edit material</DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="text-red-600"
-                    onClick={() => handleDelete(material)}
-                  >
-                    Delete material
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          );
-        },
+  const actionColumn = useMemo(() => {
+    return {
+      id: "actions",
+      cell: ({ row }) => {
+        const material = row.original;
+        return (
+          <div className="flex justify-end -ml-4">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <InfoIcon className="h-4 w-6" />
+                </TooltipTrigger>
+                <TooltipContent>{material.description}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-6 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-6 w-6" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => handleCopyID(material._id)}>
+                  Copy Material ID
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Edit material</DropdownMenuItem>
+                <ConfirmDialog
+                  renderTrigger={
+                    <DropdownMenuItem
+                      className="text-red-600"
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      Delete
+                    </DropdownMenuItem>
+                  }
+                  title="Delete Material"
+                  description={
+                    <>
+                      Are you sure you want to delete{" "}
+                      <strong>{material.name}</strong>?
+                    </>
+                  }
+                  confirmText="Delete"
+                  confirmTextClassName="bg-red-600 text-white hover:bg-red-600/50"
+                  cancelText="Cancel"
+                  onConfirm={() => handleDelete(material)}
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
       },
-    ],
-    [handleCopyID, handleDelete]
-  );
+    };
+  }, [handleCopyID, handleDelete]);
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+  const finalColumns = useMemo(
+    () => [...columns, actionColumn],
+    [columns, actionColumn]
+  );
+  const memoizedMaterials = useMemo(() => materials?.data || [], [materials]);
+
+  if (isLoading) return <LoadingScreen />;
 
   if (isError) {
-    toast.error("Material Featch Error", {
+    toast.error("Material Fetch Error", {
       description: error?.data?.message,
       duration: 2000,
     });
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <DataTable columns={columns} data={materials?.data || []} />
+    <div className="container mx-auto">
+      <DataTable columns={finalColumns} data={memoizedMaterials} />
     </div>
   );
 };

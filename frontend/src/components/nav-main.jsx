@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useLocation } from "react-router-dom";
 import { NavLink } from "react-router-dom";
-import { act } from "react";
+import TooltipPop from "./tooltip-pop";
 
 export function NavMain({ items }) {
   const location = useLocation();
@@ -37,7 +37,7 @@ export function NavMain({ items }) {
               }
             >
               <NavLink to={item.url}>
-                <item.icon />
+                <TooltipPop content={item.name} trigger={<item.icon />} side="right" className="" />
                 <span>{item.name}</span>
               </NavLink>
             </SidebarMenuButton>

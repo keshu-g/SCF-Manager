@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -86,22 +86,26 @@ const FormSheet = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: data || {},
     mode: "onChange",
   });
 
   useEffect(() => {
-    if (!open) {
-      form.reset(data || {}); // Reset form when sheet closes
+    form.reset(data ?? {});
+  }, [data, form]);
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        document.activeElement?.blur(); // Removes focus from any element
+      }, 0);
     }
-  }, [open, data, form]);
+  }, [open]);
 
   const handleSubmit = async (values) => {
     setIsSubmitting(true);
-
     try {
       await onSubmit(values);
-      setTimeout(() => setOpen(false), 0);
+      setOpen(false); // No need for setTimeout
     } catch (error) {
       form.setError("root", {
         type: "manual",
@@ -112,7 +116,7 @@ const FormSheet = ({
     }
   };
 
-  const renderField = (fieldConfig, formField) => {
+  const renderField = useCallback((fieldConfig, formField) => {
     if (fieldConfig.component) {
       return <fieldConfig.component {...formField} {...fieldConfig} />;
     }
@@ -138,12 +142,12 @@ const FormSheet = ({
           />
         );
     }
-  };
+  }, []);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <div onClick={() => setOpen(true)}>{trigger}</div>
+        <div>{trigger}</div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="pb-0">

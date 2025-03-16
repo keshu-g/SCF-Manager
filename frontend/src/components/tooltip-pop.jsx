@@ -11,13 +11,14 @@ const TooltipPop = ({
   trigger,
   className = "",
   delayDuration = 0,
+  side,
   ...props
 }) => {
   return (
     <TooltipProvider delayDuration={delayDuration} {...props}>
       <Tooltip>
         <TooltipTrigger asChild>{trigger}</TooltipTrigger>
-        <TooltipContent className={className}>{content}</TooltipContent>
+        <TooltipContent side={side} className={className}>{content}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

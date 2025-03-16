@@ -14,28 +14,38 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
   console.log("API Response:", result);
 
   if (result.error && result.error.status === 401) {
-    console.log("🔴 Unauthorized! Trying to refresh...");
+    console.log("🔴 Unauthorized! Attempting token refresh...");
 
-    // Try refreshing the session
     console.log("🔄 Refreshing session...", api);
-    const refreshResult = await baseQuery("/user/refresh", api, {
-      method: "POST",
-    });
+    const refreshResult = await baseQuery(
+      { url: "/user/refresh", method: "POST" },
+      api,
+      extraOptions
+    );
+
     console.log("🔄 Refresh Response:", refreshResult);
 
     if (refreshResult.data) {
-      console.log("✅ Refresh successful! Fetching user profile...");
+      console.log("✅ Refresh successful! Fetching updated user profile...");
 
-      // Fetch user profile after refresh
-      const profileResult = await baseQuery("/user/profile", api, extraOptions);
+      const profileResult = await baseQuery(
+        { url: "/user/profile", method: "GET" },
+        api,
+        extraOptions
+      );
+
       console.log("👤 User Profile Response:", profileResult);
 
       if (profileResult.data) {
         api.dispatch(setUser(profileResult.data));
+        // Retry the original request
         result = await baseQuery(args, api, extraOptions);
+      } else {
+        console.error("⚠️ Profile fetch failed! Logging out...");
+        api.dispatch(logout());
       }
     } else {
-      console.log("❌ Refresh failed! Logging out...");
+      console.error("❌ Refresh failed! Logging out...");
       api.dispatch(logout());
     }
   }

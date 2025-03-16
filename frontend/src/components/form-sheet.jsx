@@ -91,8 +91,11 @@ const FormSheet = ({
   });
 
   useEffect(() => {
-    form.reset(data || {});
-  }, [data, form]);
+    if (!open) {
+      form.reset(data || {}); // Reset form when sheet closes
+    }
+  }, [open, data, form]);
+
   const handleSubmit = async (values) => {
     setIsSubmitting(true);
 

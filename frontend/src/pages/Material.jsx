@@ -3,9 +3,10 @@ import {
   useGetMaterialsQuery,
   useDeleteMaterialMutation,
   useUpdateMaterialMutation,
+  useCreateMaterialMutation,
 } from "../features/material/materialApi";
 import DataTable from "../components/data-table";
-import { MoreHorizontal, InfoIcon } from "lucide-react";
+import { MoreHorizontal, InfoIcon, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,17 +16,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import DataTableColumnHeader from "@/components/data-table-column-header";
 import LoadingScreen from "@/components/loading-screen";
 import { toast } from "sonner";
 import ConfirmDialog from "@/components/confirm-dialog";
-import EditSheet from "@/components/edit-sheet";
+import FormSheet from "@/components/form-sheet";
+import TooltipPop from "@/components/tooltip-pop";
 
 const Material = () => {
   const {
@@ -37,6 +34,7 @@ const Material = () => {
   } = useGetMaterialsQuery();
   const [deleteMaterial] = useDeleteMaterialMutation();
   const [updateMaterial] = useUpdateMaterialMutation();
+  const [createMaterial] = useCreateMaterialMutation();
 
   const handleCopyID = useCallback((id) => {
     navigator.clipboard.writeText(id);
@@ -74,6 +72,19 @@ const Material = () => {
       }
     },
     [updateMaterial, refetch]
+  );
+
+  const handleCreate = useCallback(
+    async (newMaterial) => {
+      try {
+        const response = await createMaterial(newMaterial).unwrap();
+        toast.success(response.message || "Material created successfully");
+        refetch();
+      } catch (error) {
+        toast.error(error?.data?.message || "Failed to create material");
+      }
+    },
+    [createMaterial, refetch]
   );
 
   const columns = useMemo(() => {
@@ -131,14 +142,14 @@ const Material = () => {
         const material = row.original;
         return (
           <div className="flex justify-end -ml-4">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <InfoIcon className="h-4 w-6" />
-                </TooltipTrigger>
-                <TooltipContent>{material.description}</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <TooltipPop
+              content={material.description}
+              trigger={
+                <Button variant="ghost" className="h-6 w-8 p-0">
+                  <InfoIcon className="h-4 w-4" />
+                </Button>
+              }
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-6 w-8 p-0">
@@ -153,7 +164,7 @@ const Material = () => {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <div className="focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground">
-                  <EditSheet
+                  <FormSheet
                     title="Edit Material"
                     description="Update material details here."
                     fields={[
@@ -173,12 +184,12 @@ const Material = () => {
                       {
                         label: "Description",
                         name: "description",
-                        type: "textarea"
+                        type: "textarea",
                       },
                     ]}
                     data={material}
                     onSubmit={handleUpdate}
-                    triggerLabel="Edit Material"
+                    trigger="Edit Material"
                   />
                 </div>
                 <ConfirmDialog
@@ -187,7 +198,7 @@ const Material = () => {
                       className="text-red-600"
                       onSelect={(e) => e.preventDefault()}
                     >
-                      Delete
+                      Delete Material
                     </DropdownMenuItem>
                   }
                   title="Delete Material"
@@ -227,7 +238,46 @@ const Material = () => {
 
   return (
     <div className="container mx-auto">
-      <DataTable columns={finalColumns} data={memoizedMaterials} />
+      <DataTable
+        columns={finalColumns}
+        data={memoizedMaterials}
+        additionalActions={
+          <FormSheet
+            title="Add Material"
+            description="Add new material details here."
+            fields={[
+              {
+                label: "Name",
+                name: "name",
+                type: "text",
+                required: true,
+              },
+              {
+                label: "Quantity",
+                name: "quantity",
+                type: "number",
+                required: true,
+              },
+              {
+                label: "Description",
+                name: "description",
+                type: "textarea",
+              },
+            ]}
+            onSubmit={handleCreate}
+            trigger={
+              <TooltipPop
+                content="Add Material"
+                trigger={
+                  <Button variant="outline" className="ml-3">
+                    <Plus />
+                  </Button>
+                }
+              />
+            }
+          />
+        }
+      />
     </div>
   );
 };

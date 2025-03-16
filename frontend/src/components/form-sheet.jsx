@@ -72,13 +72,13 @@ const createSchema = (fields) =>
     }, {})
   );
 
-const EditSheet = ({
+const FormSheet = ({
   title,
   description,
   fields,
   data,
   onSubmit,
-  triggerLabel = "Edit",
+  trigger = "Edit",
   submitLabel = "Save changes",
 }) => {
   const schema = useMemo(() => createSchema(fields), [fields]);
@@ -140,7 +140,7 @@ const EditSheet = ({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <div onClick={() => setOpen(true)}>{triggerLabel}</div>
+        <div onClick={() => setOpen(true)}>{trigger}</div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="pb-0">
@@ -206,4 +206,4 @@ const EditSheet = ({
   );
 };
 
-export default EditSheet;
+export default FormSheet;

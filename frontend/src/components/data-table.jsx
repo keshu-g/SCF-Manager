@@ -26,7 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function DataTable({ columns, data }) {
+export default function DataTable({ columns, data, additionalActions }) {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -96,6 +96,8 @@ export default function DataTable({ columns, data }) {
               ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {additionalActions}
       </div>
 
       <div className="rounded-md border">

@@ -94,40 +94,48 @@ const Material = () => {
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Name" />
         ),
-        cell: ({ row }) => <div className="pl-3">{row.getValue("name")}</div>,
+        cell: ({ row }) => <div className="pl-1">{row.getValue("name")}</div>,
       },
       {
-        accessorKey: "quantity",
+        accessorFn: (row) => {
+          const quantity = parseInt(row.quantity, 10);
+          const formatted = new Intl.NumberFormat("en-US", {
+            style: "unit",
+            unit: "kilogram",
+          }).format(quantity);
+          return formatted;
+        },
+        id: "quantity",
         header: ({ column }) => (
           <div className="flex justify-end">
             <DataTableColumnHeader column={column} title="Quantity" />
           </div>
         ),
         cell: ({ row }) => {
-          const quantity = parseInt(row.getValue("quantity"), 10);
-          const formatted = new Intl.NumberFormat("en-US", {
-            style: "unit",
-            unit: "kilogram",
-          }).format(quantity);
-          return <div className="pr-4 text-right font-medium">{formatted}</div>;
+          return (
+            <div className="text-right font-medium">
+              {row.getValue("quantity")}
+            </div>
+          );
         },
       },
       {
-        accessorKey: "updatedAt",
+        accessorFn: (row) =>
+          new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }).format(new Date(row.updatedAt)),
+        id: "updatedAt",
         header: ({ column }) => (
           <div className="flex justify-end">
             <DataTableColumnHeader column={column} title="Updated" />
           </div>
         ),
         cell: ({ row }) => {
-          const updatedAt = row.getValue("updatedAt");
           return (
-            <div className="pr-4 text-right font-medium">
-              {new Intl.DateTimeFormat("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              }).format(new Date(updatedAt))}
+            <div className=" text-right font-medium">
+              {row.getValue("updatedAt")}
             </div>
           );
         },
@@ -144,6 +152,7 @@ const Material = () => {
           <div className="flex justify-end -ml-4">
             <TooltipPop
               content={material.description}
+              className="min-w-min max-w-xs"
               trigger={
                 <Button variant="ghost" className="h-6 w-8 p-0">
                   <InfoIcon className="h-4 w-4" />
@@ -237,7 +246,7 @@ const Material = () => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto h-full">
       <DataTable
         columns={finalColumns}
         data={memoizedMaterials}

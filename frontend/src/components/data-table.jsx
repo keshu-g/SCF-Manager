@@ -39,10 +39,10 @@ export default function DataTable({ columns, data, additionalActions }) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     state: {
@@ -51,6 +51,7 @@ export default function DataTable({ columns, data, additionalActions }) {
       columnVisibility,
       globalFilter,
     },
+    globalFilterFn: "auto",
   });
 
   const setGlobalFilterHandler = React.useCallback(
@@ -100,9 +101,9 @@ export default function DataTable({ columns, data, additionalActions }) {
         {additionalActions}
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+      <div className="max-h-[70vh] overflow-auto rounded-md border">
+        <Table className>
+          <TableHeader className="sticky top-0 bg-background shadow-xs shadow-border">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -126,7 +127,7 @@ export default function DataTable({ columns, data, additionalActions }) {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="px-4 py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

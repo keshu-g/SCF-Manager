@@ -91,7 +91,7 @@ const FormSheet = ({
 
   useEffect(() => {
     form.reset(data ?? {});
-  }, [data, form]);
+  }, [data, form, open]);
 
   useEffect(() => {
     if (open) {
@@ -202,7 +202,11 @@ const FormSheet = ({
                 )}
                 {submitLabel}
               </Button>
-              <Button variant="secondary" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
             </SheetFooter>

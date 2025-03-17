@@ -54,8 +54,6 @@ export function NavUser() {
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.fullName} />
                 <AvatarFallback className="rounded-lg">
-                  {/* {user.fullName[0].toupperCase()}
-                   */}
                    {user.fullName[0].toUpperCase()}
                 </AvatarFallback>
               </Avatar>

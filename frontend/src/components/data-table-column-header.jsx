@@ -15,13 +15,13 @@ export default function DataTableColumnHeader({ column, title, className }) {
   }
 
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div className={cn("flex items-center", className)}>
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         {title}
-        <ChevronsUpDown className="ml-2 h-4 w-4" />
+        <ChevronsUpDown className="h-4 w-4" />
       </Button>
     </div>
   );

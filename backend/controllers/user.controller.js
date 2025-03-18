@@ -91,7 +91,7 @@ const logout = apiHandler(async (req, res) => {
 const refreshToken = apiHandler(async (req, res) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
-    return apiError(messages.INVALID_AUTH, null, null, res);
+    return apiError(messages.UNAUTHORIZED, null, null, res);
   }
 
   let decodedToken;

@@ -99,7 +99,7 @@ const refreshToken = apiHandler(async (req, res) => {
     decodedToken = jwt.verify(refreshToken, constants.REFRESH_SECRET);
   } catch (error) {
     console.error("JWT verification failed:", error);
-    return apiError(messages.INVALID_AUTH, null, null, res);
+    return apiError(messages.UNAUTHORIZED, null, null, res);
   }
 
   const userId = decodedToken.userId;

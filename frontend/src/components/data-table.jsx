@@ -25,6 +25,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ChevronDownIcon, ColumnsIcon } from "lucide-react";
 
 export default function DataTable({ columns, data, additionalActions }) {
   const [sorting, setSorting] = React.useState([]);
@@ -39,10 +40,10 @@ export default function DataTable({ columns, data, additionalActions }) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     state: {
@@ -51,6 +52,7 @@ export default function DataTable({ columns, data, additionalActions }) {
       columnVisibility,
       globalFilter,
     },
+    globalFilterFn: "auto",
   });
 
   const setGlobalFilterHandler = React.useCallback(
@@ -67,17 +69,22 @@ export default function DataTable({ columns, data, additionalActions }) {
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-2">
         <Input
+          id="global-filter"
           placeholder="Search..."
           value={globalFilter}
           onChange={setGlobalFilterHandler}
-          className="max-w-sm"
+          className="max-w-sm border-border"
+          autoComplete="search"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns
+              <ColumnsIcon />
+              <span className="hidden lg:inline">Customize Columns</span>
+              <span className="lg:hidden">Columns</span>
+              <ChevronDownIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -87,7 +94,7 @@ export default function DataTable({ columns, data, additionalActions }) {
               .map((column) => (
                 <DropdownMenuCheckboxItem
                   key={column.id}
-                  className="capitalize"
+                  className="capitalize hover:bg-green-400"
                   checked={column.getIsVisible()}
                   onCheckedChange={handleColumnVisibilityChange(column)}
                 >
@@ -100,9 +107,9 @@ export default function DataTable({ columns, data, additionalActions }) {
         {additionalActions}
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+      <div className="max-h-[70vh] overflow-auto rounded-md border">
+        <Table className>
+          <TableHeader className="sticky top-0 bg-background shadow-xs shadow-border">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -126,7 +133,7 @@ export default function DataTable({ columns, data, additionalActions }) {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="px-4 py-2">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

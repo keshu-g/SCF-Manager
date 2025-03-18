@@ -91,7 +91,7 @@ const FormSheet = ({
 
   useEffect(() => {
     form.reset(data ?? {});
-  }, [data, form]);
+  }, [data, form, open]);
 
   useEffect(() => {
     if (open) {
@@ -123,7 +123,13 @@ const FormSheet = ({
 
     switch (fieldConfig.type) {
       case "textarea":
-        return <Textarea {...formField} placeholder={fieldConfig.label} />;
+        return (
+          <Textarea
+            {...formField}
+            placeholder={fieldConfig.label}
+            autoComplete={fieldConfig.autoComplete}
+          />
+        );
       case "checkbox":
         return (
           <Checkbox
@@ -139,6 +145,7 @@ const FormSheet = ({
             {...formField}
             type={fieldConfig.type}
             placeholder={fieldConfig.label}
+            autoComplete={fieldConfig.autoComplete}
           />
         );
     }
@@ -174,7 +181,9 @@ const FormSheet = ({
                       <div className="flex items-center gap-3">
                         {renderField(field, formField)}
                         {field.type === "checkbox" && (
-                          <FormLabel className="!mt-0">{field.label}</FormLabel>
+                          <FormLabel className="!mt-0" htmlFor={formField.id}>
+                            {field.label}
+                          </FormLabel>
                         )}
                       </div>
                     </FormControl>
@@ -202,7 +211,11 @@ const FormSheet = ({
                 )}
                 {submitLabel}
               </Button>
-              <Button variant="secondary" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
             </SheetFooter>

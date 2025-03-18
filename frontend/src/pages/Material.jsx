@@ -56,8 +56,6 @@ const Material = () => {
   const handleUpdate = useCallback(
     async (updatedMaterial) => {
       try {
-        console.log("updatedMaterial : ", updatedMaterial);
-
         let updatedData = {
           id: updatedMaterial._id,
           name: updatedMaterial.name,

@@ -59,7 +59,6 @@ const Client = () => {
   const handleUpdate = useCallback(
     async (client) => {
       try {
-
         let updatedClient = {
           id: client._id,
           name: client.name,
@@ -193,7 +192,7 @@ const Client = () => {
   }
 
   return (
-    <div className="container mx-auto h-full">
+    <div className="container mx-auto h-full px-4">
       <DataTable
         columns={columns}
         data={memorizedClients}

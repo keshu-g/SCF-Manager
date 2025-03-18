@@ -247,7 +247,7 @@ const Material = () => {
   }
 
   return (
-    <div className="container mx-auto h-full">
+    <div className="container mx-auto h-full px-4">
       <DataTable
         columns={finalColumns}
         data={memoizedMaterials}

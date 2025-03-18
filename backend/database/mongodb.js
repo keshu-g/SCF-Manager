@@ -4,7 +4,6 @@ const { MONGODB_URI, DB_NAME } = constants;
 
 const connectDB = async () => {
   try {
-    console.log(`Connecting to DB : ${MONGODB_URI}/${DB_NAME}`);
     const connectionInstance = await connect(`${MONGODB_URI}/${DB_NAME}`);
 
     console.log(

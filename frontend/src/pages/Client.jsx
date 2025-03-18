@@ -134,7 +134,6 @@ const Client = () => {
                       fields={[
                         { label: "ID", name: "_id", type: "hidden" },
                         {
-                          id: "name",
                           label: "Name",
                           name: "name",
                           type: "text",
@@ -142,7 +141,6 @@ const Client = () => {
                           autoComplete: "given-name",
                         },
                         {
-                          id: "address",
                           label: "Address",
                           name: "address",
                           type: "textarea",

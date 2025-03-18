@@ -183,17 +183,20 @@ const Material = () => {
                         name: "name",
                         type: "text",
                         required: true,
+                        autoComplete: "name",
                       },
                       {
                         label: "Quantity",
                         name: "quantity",
                         type: "number",
                         required: true,
+                        autoComplete: "off",
                       },
                       {
                         label: "Description",
                         name: "description",
                         type: "textarea",
+                        autoComplete: "off",
                       },
                     ]}
                     data={material}
@@ -260,17 +263,20 @@ const Material = () => {
                 name: "name",
                 type: "text",
                 required: true,
+                autoComplete: "name",
               },
               {
                 label: "Quantity",
                 name: "quantity",
                 type: "number",
                 required: true,
+                autoComplete: "off",
               },
               {
                 label: "Description",
                 name: "description",
                 type: "textarea",
+                autoComplete: "off",
               },
             ]}
             onSubmit={handleCreate}

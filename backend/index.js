@@ -23,14 +23,4 @@ connectDB()
   })
   .catch((err) => console.log(`DB Error: ${err.message}`));
 
-if (NODE_ENV === "production") {
-  app.use(express.static(join(__dirname, "client", "build")));
-  app.get("/", (req, res) => {
-    res.sendFile(resolve(__dirname, "client", "build", "index.html"));
-  });
-  app.get("/*", (req, res) => {
-    res.sendFile(resolve(__dirname, "client", "build", "index.html"));
-  });
-} else {
-  app.get("/", (req, res) => res.send(`SCF Manager is running on port: ${PORT}`));
-}
+app.get("/", (req, res) => res.send(`SCF Manager is running on port: ${PORT}`));

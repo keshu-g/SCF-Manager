@@ -1,20 +1,13 @@
 import * as React from "react";
 import {
-  BookOpen,
-  Bot,
-  Frame,
-  GalleryVerticalEnd,
-  Settings2,
-  SquareTerminal,
-  Atom,
+  PawPrintIcon,
   BookUserIcon,
-  SquareSigma,
-  ComponentIcon,
   SquareSigmaIcon,
+  ShapesIcon,
+  LayoutDashboard,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
 import {
@@ -27,15 +20,10 @@ import {
 
 // This is sample data.
 const data = {
-  user: {
-    name: "Raj Jain",
-    email: "raj@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "SCF Manager",
-      logo: GalleryVerticalEnd,
+      logo: PawPrintIcon,
       plan: "Admin",
     },
   ],
@@ -130,22 +118,22 @@ const data = {
     {
       name: "Dashboard",
       url: "/dashboard",
-      icon: Atom,
+      icon: LayoutDashboard,
     },
     {
       name: "Material",
       url: "/material",
-      icon: ComponentIcon,
-    },
-    {
-      name: "Formula",
-      url: "/formula",
-      icon: SquareSigmaIcon,
+      icon: ShapesIcon,
     },
     {
       name: "Clients",
       url: "/client",
       icon: BookUserIcon,
+    },
+    {
+      name: "Formula",
+      url: "/formula",
+      icon: SquareSigmaIcon,
     },
   ],
 };

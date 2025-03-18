@@ -278,7 +278,7 @@ const Material = () => {
               <TooltipPop
                 content="Add Material"
                 trigger={
-                  <Button variant="outline" className="ml-3">
+                  <Button variant="outline">
                     <Plus />
                   </Button>
                 }

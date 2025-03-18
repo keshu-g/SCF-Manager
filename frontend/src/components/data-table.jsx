@@ -25,6 +25,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ChevronDownIcon, ColumnsIcon } from "lucide-react";
 
 export default function DataTable({ columns, data, additionalActions }) {
   const [sorting, setSorting] = React.useState([]);
@@ -68,17 +69,22 @@ export default function DataTable({ columns, data, additionalActions }) {
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-2">
         <Input
+          id="global-filter"
           placeholder="Search..."
           value={globalFilter}
           onChange={setGlobalFilterHandler}
-          className="max-w-sm"
+          className="max-w-sm border-border"
+          autoComplete="search"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns
+              <ColumnsIcon />
+              <span className="hidden lg:inline">Customize Columns</span>
+              <span className="lg:hidden">Columns</span>
+              <ChevronDownIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -88,7 +94,7 @@ export default function DataTable({ columns, data, additionalActions }) {
               .map((column) => (
                 <DropdownMenuCheckboxItem
                   key={column.id}
-                  className="capitalize"
+                  className="capitalize hover:bg-green-400"
                   checked={column.getIsVisible()}
                   onCheckedChange={handleColumnVisibilityChange(column)}
                 >

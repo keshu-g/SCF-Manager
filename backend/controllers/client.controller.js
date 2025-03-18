@@ -20,9 +20,11 @@ const getClient = apiHandler(async (req, res) => {
 const createClient = apiHandler(async (req, res) => {
   const clientData = req.body;
 
-  const existingClient = await clientModel.findOne({
-    name: clientData.name,
-  });
+  const existingClient = await clientModel
+    .findOne({
+      name: clientData.name,
+    })
+    .collation({ locale: "en", strength: 2 });
 
   if (existingClient) {
     return apiError(messages.EXISTS, "Client with this name", null, res);
@@ -41,6 +43,17 @@ const updateClient = apiHandler(async (req, res) => {
 
   if (!client) {
     return apiError(messages.NOT_FOUND, "Client", null, res);
+  }
+
+  const existingClient = await clientModel
+    .findOne({
+      name: clientData.name,
+      _id: { $ne: clientData.id },
+    })
+    .collation({ locale: "en", strength: 2 });
+
+  if (existingClient) {
+    return apiError(messages.EXISTS, "Client with this name", null, res);
   }
 
   client.updatedBy = req.user._id;

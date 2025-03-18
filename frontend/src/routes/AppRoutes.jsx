@@ -6,19 +6,21 @@ import Formula from "../pages/Formula";
 import AdminLayout from "../layouts/AdminLayout";
 import Login from "../pages/Login";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route wrapper
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { useSelector } from "react-redux";
+// import { useEffect } from "react";
 
 const AppRoutes = () => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const navigate = useNavigate();
+  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  // const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
-  }, [isAuthenticated, navigate]);
+  // useEffect(() => {
+  //   console.log("isAuthenticated", isAuthenticated);
+  //   if (!isAuthenticated) {
+  //     console.log("Redirecting to login");
+  //     navigate("/login");
+  //   }
+  // }, [isAuthenticated, navigate]);
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

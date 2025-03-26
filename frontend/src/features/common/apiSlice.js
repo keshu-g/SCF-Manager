@@ -43,10 +43,12 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       } else {
         console.error("⚠️ Profile fetch failed! Logging out...");
         api.dispatch(logout());
+        window.location.href = "/login";
       }
     } else {
       console.error("❌ Refresh failed! Logging out...");
       api.dispatch(logout());
+      window.location.href = "/login";
     }
   }
 

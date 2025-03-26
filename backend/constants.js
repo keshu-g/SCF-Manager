@@ -10,8 +10,8 @@ const config = {
   DB_NAME: "SMF-Manager",
   MONGODB_URI: process.env.MONGODB_URI,
 
-  BE_BASE_URL: process.env.BASE_URL,
-  FE_BASE_URL: process.env.BASE_URL,
+  BE_BASE_URL: process.env.BE_BASE_URL,
+  FE_BASE_URL: process.env.FE_BASE_URL,
 
   JWT_SECRET: process.env.JWT_SECRET,
   REFRESH_SECRET: process.env.REFRESH_SECRET,

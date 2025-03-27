@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SelectInput } from "./select-input";
 import { useState } from "react";
 import {
   Form,
@@ -45,7 +46,7 @@ const createSchema = (fields) =>
             (val) => (val === "" ? undefined : Number(val)),
             z
               .number({ invalid_type_error: `${field.label} must be a number` })
-              .positive(`${field.label} must be greater than zero`)
+              .min(0, "Value must be greater than or equal to zero")
           );
           break;
         case "email":
@@ -73,7 +74,7 @@ const createSchema = (fields) =>
   );
 
 const FormSheet = ({
-  title,
+  title = "Edit",
   description,
   fields,
   data,
@@ -137,12 +138,29 @@ const FormSheet = ({
             onCheckedChange={formField.onChange}
           />
         );
+      case "select":
+        return (
+          <Controller
+            control={form.control}
+            name={fieldConfig.name}
+            render={({ field }) => (
+              <SelectInput
+                {...field}
+                options={fieldConfig.options}
+                selectLabel={fieldConfig.selectLabel}
+                placeholder={fieldConfig.placeholder}
+              />
+            )}
+          />
+        );
+
       case "hidden":
         return <input type="hidden" {...formField} />;
       default:
         return (
           <Input
             {...formField}
+            value={formField.value ?? ""}
             type={fieldConfig.type}
             placeholder={fieldConfig.label}
             autoComplete={fieldConfig.autoComplete}

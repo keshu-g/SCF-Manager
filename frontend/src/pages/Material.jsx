@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import ConfirmDialog from "@/components/confirm-dialog";
 import FormSheet from "@/components/form-sheet";
 import TooltipPop from "@/components/tooltip-pop";
+import { formatValue } from "@/lib/utils";
 
 const Material = () => {
   const {
@@ -61,6 +62,8 @@ const Material = () => {
           name: updatedMaterial.name,
           quantity: updatedMaterial.quantity,
           description: updatedMaterial.description,
+          price: updatedMaterial.price,
+          unit: updatedMaterial.unit
         };
         const response = await updateMaterial(updatedData).unwrap();
         toast.success(response.message || "Material updated successfully");
@@ -97,11 +100,7 @@ const Material = () => {
       {
         accessorFn: (row) => {
           const quantity = parseInt(row.quantity, 10);
-          const formatted = new Intl.NumberFormat("en-US", {
-            style: "unit",
-            unit: "kilogram",
-          }).format(quantity);
-          return formatted;
+          return formatValue({ quantity, type: "unit", unit: row.unit });
         },
         id: "quantity",
         header: ({ column }) => (
@@ -113,6 +112,29 @@ const Material = () => {
           return (
             <div className="text-right font-medium">
               {row.getValue("quantity")}
+            </div>
+          );
+        },
+      },
+      {
+        accessorFn: (row) => {
+          const price = parseInt(row.price);
+          return formatValue({
+            quantity: price,
+            type: "currency",
+            currency: "INR",
+          });
+        },
+        id: "price",
+        header: ({ column }) => (
+          <div className="flex justify-end">
+            <DataTableColumnHeader column={column} title="Price" />
+          </div>
+        ),
+        cell: ({ row }) => {
+          return (
+            <div className="text-right font-medium">
+              {row.getValue("price")}
             </div>
           );
         },
@@ -187,6 +209,29 @@ const Material = () => {
                         label: "Quantity",
                         name: "quantity",
                         type: "number",
+                        required: true,
+                        autoComplete: "off",
+                      },
+                      {
+                        label: "Price",
+                        name: "price",
+                        type: "number",
+                        required: true,
+                        autoComplete: "off",
+                      },
+                      {
+                        label: "Unit",
+                        name: "unit",
+                        type: "select",
+                        // selectLabel: "Select Unit",
+                        placeholder: "Select Unit",
+                        options: [
+                          { value: "kilogram", label: "⚖️ Kilogram" },
+                          { value: "gram", label: "📏 Gram" },
+                          { value: "liter", label: "🧴 Liter" },
+                          { value: "milliliter", label: "💧 Milliliter" },
+                          { value: "piece", label: "📦 Pieces" },
+                        ],
                         required: true,
                         autoComplete: "off",
                       },
@@ -267,6 +312,29 @@ const Material = () => {
                 label: "Quantity",
                 name: "quantity",
                 type: "number",
+                required: true,
+                autoComplete: "off",
+              },
+              {
+                label: "Price",
+                name: "price",
+                type: "number",
+                required: true,
+                autoComplete: "off",
+              },
+              {
+                label: "Unit",
+                name: "unit",
+                type: "select",
+                // selectLabel: "Select Unit",
+                placeholder: "Select Unit",
+                options: [
+                  { value: "kilogram", label: "⚖️ Kilogram" },
+                  { value: "gram", label: "📏 Gram" },
+                  { value: "liter", label: "🧴 Liter" },
+                  { value: "milliliter", label: "💧 Milliliter" },
+                  { value: "piece", label: "📦 Pieces" },
+                ],
                 required: true,
                 autoComplete: "off",
               },

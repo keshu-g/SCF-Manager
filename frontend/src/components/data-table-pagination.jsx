@@ -16,22 +16,23 @@ import {
 
 export function DataTablePagination({ table }) {
   return (
-    <div className="flex items-center justify-end p-2">
+    <div className="flex items-center flex-wrap justify-end py-3">
       <div className="flex-1 text-sm text-muted-foreground">
-        Total {" "}
-        {table.getFilteredRowModel().rows.length} rows.
+        Total {table.getFilteredRowModel().rows.length} rows
       </div>
-      <div className="flex items-center space-x-6 lg:space-x-8">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+      <div className="flex items-center flex-wrap space-x-4 lg:space-x-8">
+        <div className="flex items-center gap-3">
+          <p className="hidden lg:flex text-sm font-medium whitespace-nowrap">
+            Rows per page:
+          </p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
-            }}
+            onValueChange={(value) => table.setPageSize(Number(value))}
           >
-            <SelectTrigger className="h-8 w-[70px]">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            <SelectTrigger className="h-8 w-16">
+              <SelectValue
+                placeholder={`${table.getState().pagination.pageSize}`}
+              />
             </SelectTrigger>
             <SelectContent side="top">
               {[5, 10, 15].map((pageSize) => (
@@ -42,11 +43,11 @@ export function DataTablePagination({ table }) {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+        <div className="flex items-center justify-center text-sm font-medium">
           Page {table.getState().pagination.pageIndex + 1} of{" "}
           {table.getPageCount()}
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"

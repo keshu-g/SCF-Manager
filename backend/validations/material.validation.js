@@ -14,6 +14,14 @@ const addMaterialSchema = joi
     name: stringValidation,
     description: stringValidation.optional().allow(""),
     quantity: numberValidation,
+    price: numberValidation,
+    unit: stringValidation.valid(
+      "kilogram",
+      "gram",
+      "liter",
+      "milliliter",
+      "piece"
+    ),
   })
   .unknown(false);
 

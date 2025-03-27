@@ -14,7 +14,6 @@ const app = express();
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl)
-    console.log(origin);
     if (!origin) return callback(null, true);
     return callback(null, origin); // Reflect the request origin
   },

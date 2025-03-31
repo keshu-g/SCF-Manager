@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   useGetClientsQuery,
   useGetClientQuery,
@@ -26,6 +27,7 @@ import FormSheet from "@/components/form-sheet";
 import TooltipPop from "@/components/tooltip-pop";
 
 const Client = () => {
+  const navigate = useNavigate();
   const {
     data: clients,
     isLoading,
@@ -86,6 +88,13 @@ const Client = () => {
       }
     },
     [createClient, refetch]
+  );
+
+  const handleRowClick = useCallback(
+    (client) => {
+      navigate(`/client/${client._id}/products`);
+    },
+    [navigate]
   );
 
   const columns = useMemo(() => {
@@ -196,6 +205,7 @@ const Client = () => {
       <DataTable
         columns={columns}
         data={memorizedClients}
+        onRowClick={handleRowClick}
         additionalActions={
           <FormSheet
             title="Add Client"

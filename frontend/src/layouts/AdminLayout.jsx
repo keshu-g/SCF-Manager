@@ -20,7 +20,6 @@ const pageNames = {
   "/dashboard": { parentName: "Master Data Data", name: "Dashboard" },
   "/client": { parentName: "Master Data", name: "Client" },
   "/material": { parentName: "Master Data", name: "Material" },
-  "/formula": { parentName: "Master Data", name: "Formula" },
 };
 
 export default function Page() {

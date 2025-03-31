@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDownIcon, ColumnsIcon } from "lucide-react";
 
-export default function DataTable({ columns, data, additionalActions }) {
+export default function DataTable({ columns, data, additionalActions, onRowClick = null }) {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -131,6 +131,7 @@ export default function DataTable({ columns, data, additionalActions }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="px-4 py-2">

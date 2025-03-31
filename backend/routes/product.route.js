@@ -6,6 +6,7 @@ import {
   deleteProduct,
   getProducts,
   getProduct,
+  getProductsByClient,
   manufactureProduct,
 } from "../controllers/product.controller.js";
 import {
@@ -17,6 +18,11 @@ import {
 const router = express.Router();
 
 router.get("/", getProducts);
+router.get(
+  "/client/:id",
+  validate(getProductSchema, "params"),
+  getProductsByClient
+);
 router.get("/:id", validate(getProductSchema, "params"), getProduct);
 router.post("/", validate(addProductSchema, "body"), createProduct);
 router.put("/", validate(updateProductSchema, "body"), updateProduct);

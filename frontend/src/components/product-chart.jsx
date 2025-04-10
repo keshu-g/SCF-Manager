@@ -1,5 +1,4 @@
-import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, LabelList, Line, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,

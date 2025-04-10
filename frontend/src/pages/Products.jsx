@@ -77,7 +77,7 @@ const Products = () => {
         {filteredProducts.length === 0 ? (
           <p className="text-xl p-4 w-full text-center">No products found.</p>
         ) : (
-          filteredProducts.map((product, idx) => {
+          filteredProducts.map((product) => {
             const chartData = (product.formula || []).map((item) => ({
               material: item.material.name,
               quantity: item.quantity,

@@ -15,20 +15,44 @@ import {
 } from "@/components/ui/sidebar";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Outlet, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const pageNames = {
-  "/dashboard": { parentName: "Master Data Data", name: "Dashboard" },
-  "/client": { parentName: "Master Data", name: "Client" },
-  "/material": { parentName: "Master Data", name: "Material" },
-  "/formula": { parentName: "Master Data", name: "Formula" },
+  dashboard: "Dashboard",
+  client: "Clients",
+  material: "Materials",
+  products: "Products",
+  orders: "Orders",
+};
+
+const generateBreadcrumbs = (pathname) => {
+  const segments = pathname.split("/").filter(Boolean);
+  let accumulatedPath = "";
+  const breadcrumbs = segments
+    .map((segment, index) => {
+      if (index > 0 && pageNames[segments[index - 1]]) return null;
+
+      accumulatedPath += `/${segment}`;
+      const name = Object.prototype.hasOwnProperty.call(pageNames, segment)
+        ? pageNames[segment]
+        : segment;
+
+      return {
+        name,
+        path: accumulatedPath,
+      };
+    })
+    .filter(Boolean);
+
+  return [{ name: "Master Data", path: "/" }, ...breadcrumbs];
 };
 
 export default function Page() {
   const location = useLocation();
-
-  const currentPage = React.useMemo(() => {
-    return pageNames[location.pathname] || { parentName: "???", name: "???" };
-  }, [location.pathname]);
+  const breadcrumbs = React.useMemo(
+    () => generateBreadcrumbs(location.pathname),
+    [location.pathname]
+  );
 
   return (
     <SidebarProvider>
@@ -39,14 +63,19 @@ export default function Page() {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
-              <BreadcrumbList className="flex items-center justify-center">
-                <BreadcrumbItem className="hidden md:block">
-                  {currentPage.parentName}
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="pt-1" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{currentPage.name}</BreadcrumbPage>
-                </BreadcrumbItem>
+              <BreadcrumbList className="flex items-center">
+                {breadcrumbs.map((breadcrumb, index) => (
+                  <React.Fragment key={breadcrumb.path}>
+                    <BreadcrumbItem>
+                      {index < breadcrumbs.length - 1 ? (
+                        <Link to={breadcrumb.path}>{breadcrumb.name}</Link>
+                      ) : (
+                        <BreadcrumbPage>{breadcrumb.name}</BreadcrumbPage>
+                      )}
+                    </BreadcrumbItem>
+                    {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+                  </React.Fragment>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

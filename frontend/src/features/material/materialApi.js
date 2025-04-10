@@ -1,4 +1,3 @@
-import { get } from "react-hook-form";
 import apiSlice from "../common/apiSlice";
 
 export const materialApi = apiSlice.injectEndpoints({

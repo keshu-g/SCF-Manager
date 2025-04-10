@@ -17,6 +17,19 @@ const getProduct = apiHandler(async (req, res) => {
   return apiResponse(messages.FETCH, "Product", product, res);
 });
 
+const getProductsByClient = apiHandler(async (req, res) => {
+  const id = req.params.id;
+
+  const products = await productModel
+    .find({ client: id })
+    .populate("formula.material");
+  if (!products) {
+    return apiError(messages.NOT_FOUND, "Products", null, res);
+  }
+
+  return apiResponse(messages.FETCH, "Products", products, res);
+});
+
 const createProduct = apiHandler(async (req, res) => {
   const productData = req.body;
 
@@ -26,9 +39,11 @@ const createProduct = apiHandler(async (req, res) => {
     return apiError(messages.NOT_FOUND, "Client", null, res);
   }
 
-  const existingProduct = await productModel.findOne({
-    name: productData.name,
-  });
+  const existingProduct = await productModel
+    .findOne({
+      name: productData.name,
+    })
+    .collation({ locale: "en", strength: 2 });
 
   if (existingProduct) {
     return apiError(messages.EXISTS, "Product with this name", null, res);
@@ -154,6 +169,7 @@ const manufactureProduct = apiHandler(async (req, res) => {
 export {
   getProducts,
   getProduct,
+  getProductsByClient,
   createProduct,
   updateProduct,
   deleteProduct,

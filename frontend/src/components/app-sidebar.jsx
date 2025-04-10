@@ -129,12 +129,7 @@ const data = {
       name: "Clients",
       url: "/client",
       icon: BookUserIcon,
-    },
-    {
-      name: "Formula",
-      url: "/formula",
-      icon: SquareSigmaIcon,
-    },
+    }
   ],
 };
 

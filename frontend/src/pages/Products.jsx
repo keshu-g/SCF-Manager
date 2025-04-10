@@ -1,9 +1,15 @@
 import { useParams } from "react-router-dom";
-import { useGetProductsByClientIdQuery } from "../features/product/productApi";
+import {
+  useGetProductsByClientIdQuery,
+  useDeleteProductMutation,
+} from "../features/product/productApi";
 import LoadingScreen from "@/components/loading-screen";
 import { BarChartMixed } from "@/components/product-chart";
 import { LucideEdit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import ConfirmDialog from "@/components/confirm-dialog";
+import { useCallback, useEffect } from "react";
 
 const Products = () => {
   const { clientId } = useParams();
@@ -12,7 +18,21 @@ const Products = () => {
     isLoading,
     isError,
     error,
+    refetch,
   } = useGetProductsByClientIdQuery(clientId);
+  const [deleteProduct] = useDeleteProductMutation();
+
+  const handleDelete = useCallback(
+    async (productId) => {
+      try {
+        const response = await deleteProduct(productId).unwrap();
+        toast.success(response?.message || "Product deleted successfully");
+      } catch (error) {
+        toast.error(error?.data?.message || "Failed to delete product");
+      }
+    },
+    [deleteProduct, refetch]
+  );
 
   if (isLoading) return <LoadingScreen />;
 
@@ -74,13 +94,28 @@ const Products = () => {
                   >
                     <LucideEdit />
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="text-red-500"
-                  >
-                    <Trash2 />
-                  </Button>
+                  <ConfirmDialog
+                    renderTrigger={
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="text-red-500"
+                      >
+                        <Trash2 />
+                      </Button>
+                    }
+                    title="Delete Product"
+                    description={
+                      <>
+                        Are you sure you want to delete{" "}
+                        <strong>{product.name}</strong>?
+                      </>
+                    }
+                    confirmText="Delete"
+                    confirmTextClassName="bg-red-600 text-white hover:bg-red-600/50"
+                    cancelText="Cancel"
+                    onConfirm={() => handleDelete(product._id)}
+                  />
                 </div>
               </div>
             }

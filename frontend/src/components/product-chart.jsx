@@ -47,7 +47,7 @@ export function BarChartMixed({
               tickMargin={3}
               scale={"auto"}
               axisLine={false}
-              width={60}
+              width={70}
               tickFormatter={(label) =>
                 label.charAt(0).toUpperCase() + label.slice(1)
               }

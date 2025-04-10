@@ -14,7 +14,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-export function BarChartMixed({
+export function ProductChart({
   xAxisDataKey = "",
   yAxisDataKey = "",
   title,

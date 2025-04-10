@@ -1,18 +1,9 @@
 import React from "react";
-import { BarChartMultiple } from "@/components/dashboard/bar-chat";
-import { BarChartMixed } from "@/components/product-chart";
-import { LucideEdit, LucideDelete, Trash2 } from "lucide-react";
+import { ProductChart } from "@/components/product-chart";
+import { LucideEdit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Material from "./Material";
 
 const Dashboard = () => {
-  // const chartData = [
-  //   { browser: "chrome", visitors: 40, fill: "var(--color-chrome)" },
-  //   { browser: "safari", visitors: 50, fill: "var(--color-safari)" },
-  //   { browser: "firefox", visitors: 90, fill: "var(--color-firefox)" },
-  //   { browser: "edge", visitors: 90, fill: "var(--color-edge)" },
-  //   { browser: "other", visitors: 20, fill: "var(--color-other)" },
-  // ];
   const chartData = [
     { material: "Iron", quantity: 40, fill: "var(--color-Iron)" },
     { material: "steel", quantity: 50, fill: "var(--color-steel)" },
@@ -49,7 +40,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-wrap gap-4 justify-center p-4">
-      <BarChartMixed
+      <ProductChart
         xAxisDataKey="quantity"
         yAxisDataKey="material"
         title={

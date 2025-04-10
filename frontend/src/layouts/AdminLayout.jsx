@@ -30,13 +30,15 @@ const generateBreadcrumbs = (pathname) => {
   let accumulatedPath = "";
   const breadcrumbs = segments
     .map((segment, index) => {
-      if (index > 0 && pageNames[segments[index - 1]]) {
-        return null;
-      }
+      if (index > 0 && pageNames[segments[index - 1]]) return null;
 
       accumulatedPath += `/${segment}`;
+      const name = Object.prototype.hasOwnProperty.call(pageNames, segment)
+        ? pageNames[segment]
+        : segment;
+
       return {
-        name: pageNames[segment] || segment,
+        name,
         path: accumulatedPath,
       };
     })

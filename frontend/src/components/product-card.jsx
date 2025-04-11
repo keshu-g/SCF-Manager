@@ -14,12 +14,10 @@ export function ProductCard() {
       <CardHeader>
         <CardTitle>Good Product Name</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-wrap gap-4 w-full justify-evenly">
+        <ProductMaterialsTable />
         <ProductMaterialsTable />
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-
-      </CardFooter>
     </Card>
   );
 }

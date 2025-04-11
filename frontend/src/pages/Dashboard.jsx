@@ -6,7 +6,10 @@ import { ProductCard } from "@/components/product-card";
 
 const Dashboard = () => {
   return (
-    <div className="flex flex-wrap gap-4 justify-center p-4">
+    <div className="flex flex-wrap gap-4 p-4 w-full">
+      <ProductCard />
+      <ProductCard />
+      <ProductCard />
       <ProductCard />
     </div>
   );

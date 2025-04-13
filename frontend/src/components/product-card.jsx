@@ -12,9 +12,9 @@ export function ProductCard() {
   return (
     <Card className="gap-4 w-full">
       <CardHeader>
-        <CardTitle>Good Product Name</CardTitle>
+        <CardTitle className="text-l">Good Product Name</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-4 w-full justify-evenly">
+      <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center">
         <ProductMaterialsTable />
         <ProductMaterialsTable />
       </CardContent>

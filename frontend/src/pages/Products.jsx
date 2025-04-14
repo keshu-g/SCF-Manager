@@ -10,6 +10,9 @@ import { toast } from "sonner";
 import ConfirmDialog from "@/components/confirm-dialog";
 import { useCallback, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
+import TooltipPop from "@/components/tooltip-pop";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
   const { clientId } = useParams();
@@ -22,6 +25,7 @@ const Products = () => {
   } = useGetProductsByClientIdQuery(clientId);
   const [deleteProduct] = useDeleteProductMutation();
   const [globalFilter, setGlobalFilter] = useState("");
+  const navigate = useNavigate();
 
   const filteredProducts = useMemo(() => {
     if (!products?.data) return [];
@@ -50,6 +54,13 @@ const Products = () => {
     },
     [deleteProduct, refetch]
   );
+  
+  const handleAddProductClick = useCallback(
+    (client) => {
+      navigate(`/client/${clientId}/product/add`);
+    },
+    [navigate]
+  );
 
   if (isLoading) return <LoadingScreen />;
 
@@ -61,18 +72,36 @@ const Products = () => {
   }
 
   return (
-    <div className="flex flex-wrap gap-4 p-4 justify-center md:justify-normal">
-      <div className="w-full flex justify-center md:justify-start">
-        <Input
-          placeholder="Search products..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm border-border "
-          autoComplete="search"
+    <div className="p-4 w-full">
+      <div className="flex items-center justify-between gap-2 w-full">
+        <div className="flex-1">
+          <Input
+            placeholder="Search products..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="max-w-sm border-border"
+            autoComplete="search"
+          />
+        </div>
+        <TooltipPop
+          content="Add Material"
+          trigger={
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                handleAddProductClick();
+              }}
+            >
+              <Plus />
+            </Button>
+          }
         />
       </div>
 
-      <div className="flex flex-wrap gap-4 justify-center md:justify-normal"></div>
+      <div className="flex flex-wrap gap-4 justify-center md:justify-normal w-full">
+        {/* content here */}
+      </div>
     </div>
   );
 };

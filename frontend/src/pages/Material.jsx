@@ -350,7 +350,7 @@ const Material = () => {
               <TooltipPop
                 content="Add Material"
                 trigger={
-                  <Button variant="outline">
+                  <Button variant="outline" size="icon"> 
                     <Plus />
                   </Button>
                 }

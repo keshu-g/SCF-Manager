@@ -28,21 +28,23 @@ const pageNames = {
 const generateBreadcrumbs = (pathname) => {
   const segments = pathname.split("/").filter(Boolean);
   let accumulatedPath = "";
-  const breadcrumbs = segments
-    .map((segment, index) => {
-      if (index > 0 && pageNames[segments[index - 1]]) return null;
+  const breadcrumbs = [];
 
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i];
+
+    // Skip IDs (basic 24-char Mongo-style)
+    if (/^[a-f0-9]{24}$/.test(segment)) {
       accumulatedPath += `/${segment}`;
-      const name = Object.prototype.hasOwnProperty.call(pageNames, segment)
-        ? pageNames[segment]
-        : segment;
+      continue;
+    }
 
-      return {
-        name,
-        path: accumulatedPath,
-      };
-    })
-    .filter(Boolean);
+    accumulatedPath += `/${segment}`;
+    const rawName = pageNames[segment] || segment;
+    const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
+    breadcrumbs.push({ name, path: accumulatedPath });
+  }
 
   return [{ name: "Master Data", path: "/" }, ...breadcrumbs];
 };
@@ -58,7 +60,7 @@ export default function Page() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b top-0 sticky z-10 bg-background">
+        <header className="flex h-16 shrink-0 items-center gap-1 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b top-0 sticky z-10 bg-background">
           <div className="flex items-center gap-2 px-4 h-6">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
@@ -79,7 +81,7 @@ export default function Page() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="ml-auto px-4">
+          <div className="ml-auto px-2 md:px-4">
             <ModeToggle />
           </div>
         </header>

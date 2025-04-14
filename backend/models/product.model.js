@@ -28,6 +28,18 @@ const productSchema = new Schema(
       required: true,
     },
     formula: [formulaSchema],
+    otherCosts: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        amount: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

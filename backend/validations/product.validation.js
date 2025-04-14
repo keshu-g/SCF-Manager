@@ -20,6 +20,12 @@ const addProductSchema = joi
         quantity: numberValidation,
       })
     ),
+    otherCosts: joi.array().items(
+      joi.object({
+        name: stringValidation,
+        amount: numberValidation,
+      })
+    ),
   })
   .unknown(false);
 

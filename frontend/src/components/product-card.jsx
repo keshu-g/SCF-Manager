@@ -22,10 +22,10 @@ export function ProductCard({
   return (
     <Card className="gap-4 w-full">
       <CardHeader className="flex items-center justify-between ">
-        <CardTitle className="text-l">{productName}</CardTitle>
+        <CardTitle className="text-lg">{productName}</CardTitle>
         <div className="flex gap-1">
-          <CardTitle className="text-l cursor-pointer">{handleEdit}</CardTitle>
-          <CardTitle className="text-l cursor-pointer">
+          <CardTitle className="text-lg cursor-pointer">{handleEdit}</CardTitle>
+          <CardTitle className="text-lg cursor-pointer">
             {handleDelete}
           </CardTitle>
         </div>

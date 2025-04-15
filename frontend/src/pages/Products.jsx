@@ -3,6 +3,7 @@ import {
   useGetProductsByClientIdQuery,
   useDeleteProductMutation,
 } from "../features/product/productApi";
+import { useGetClientQuery } from "../features/client/clientApi";
 import LoadingScreen from "@/components/loading-screen";
 import { LucideEdit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ const Products = () => {
     error,
     refetch,
   } = useGetProductsByClientIdQuery(clientId);
+  const { data: client } = useGetClientQuery(clientId);
   const [deleteProduct] = useDeleteProductMutation();
   const [globalFilter, setGlobalFilter] = useState("");
   const navigate = useNavigate();
@@ -62,17 +64,14 @@ const Products = () => {
 
   const handleEditClick = useCallback(
     (productId) => {
-      navigate(`/client/${clientId}/product/${productId}`);
+      navigate(`/client/${clientId}/product/${productId}/edit`);
     },
     [navigate, refetch]
   );
 
-  const handleAddProductClick = useCallback(
-    (client) => {
-      navigate(`/client/${clientId}/product/add`);
-    },
-    [navigate]
-  );
+  const handleAddProductClick = useCallback(() => {
+    navigate(`/client/${clientId}/product/add`);
+  }, [navigate]);
 
   if (isLoading) return <LoadingScreen />;
 
@@ -85,7 +84,8 @@ const Products = () => {
 
   return (
     <div className="px-4 pb-4 w-full">
-      <div className="flex items-center justify-between gap-2 w-full py-4">
+      <h1 className="text-2xl font-bold my-4">{client?.data?.name}</h1>
+      <div className="flex items-center justify-between gap-2 w-full pb-4">
         <div className="flex-1">
           <Input
             placeholder="Search products..."
@@ -141,7 +141,12 @@ const Products = () => {
                   </Button>
                 }
                 title="Delete Product"
-                description="Are you sure you want to delete this product?"
+                description={
+                  <>
+                    Are you sure you want to delete{" "}
+                    <strong>{product.name}</strong>?
+                  </>
+                }
                 onConfirm={() => handleDelete(product._id)}
                 onCancel={() => {}}
                 confirmText="Delete"

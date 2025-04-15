@@ -38,7 +38,7 @@ const AppRoutes = () => {
             element={<AddProduct />}
           />
           <Route
-            path="/client/:clientId/product/:productId"
+            path="/client/:clientId/product/:productId/edit"
             element={<AddProduct />}
           />
           <Route path="/material" element={<Material />} />

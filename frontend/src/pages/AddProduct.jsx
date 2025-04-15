@@ -71,7 +71,7 @@ const AddProduct = ({ isEdit = false }) => {
   const handleSave = useCallback(async () => {
     const payload = {
       name: productState.name,
-      price: productState.price,
+      price: parseFloat(productState.price),
       formula: selectedMaterials.map((id) => ({
         material: id,
         quantity: quantities[id] || 0,
@@ -129,10 +129,10 @@ const AddProduct = ({ isEdit = false }) => {
   const handleQtyChange = (id, value) =>
     setQuantities((prev) => ({ ...prev, [id]: value }));
 
-  const handleOtherCostChange = (index, field, value) => {
-    const updated = [...otherCosts];
-    updated[index][field] = value;
-    setOtherCosts(updated);
+  const handleOtherCostChange = (index, key, value) => {
+    setOtherCosts((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [key]: value } : item))
+    );
   };
 
   const addOtherCost = () =>
@@ -164,9 +164,7 @@ const AddProduct = ({ isEdit = false }) => {
 
   return (
     <div className="p-4 w-full">
-      <div className="mb-4 flex items-center gap-2">
-        Client - {client?.data?.name || "N/A"}
-      </div>
+      <h1 className="text-2xl font-bold mb-4">{client?.data?.name}</h1>
 
       {/* Product Name and Price */}
       <div className="mb-4 flex flex-col md:flex-row gap-4">

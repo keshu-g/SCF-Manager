@@ -8,11 +8,12 @@ import { LucideEdit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ConfirmDialog from "@/components/confirm-dialog";
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import TooltipPop from "@/components/tooltip-pop";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ProductCard } from "@/components/product-card";
 
 const Products = () => {
   const { clientId } = useParams();
@@ -43,6 +44,10 @@ const Products = () => {
     });
   }, [products, globalFilter]);
 
+  useEffect(() => {
+    refetch();
+  }, [refetch, navigate]);
+
   const handleDelete = useCallback(
     async (productId) => {
       try {
@@ -54,7 +59,14 @@ const Products = () => {
     },
     [deleteProduct, refetch]
   );
-  
+
+  const handleEditClick = useCallback(
+    (productId) => {
+      navigate(`/client/${clientId}/product/${productId}`);
+    },
+    [navigate, refetch]
+  );
+
   const handleAddProductClick = useCallback(
     (client) => {
       navigate(`/client/${clientId}/product/add`);
@@ -72,8 +84,8 @@ const Products = () => {
   }
 
   return (
-    <div className="p-4 w-full">
-      <div className="flex items-center justify-between gap-2 w-full">
+    <div className="px-4 pb-4 w-full">
+      <div className="flex items-center justify-between gap-2 w-full py-4">
         <div className="flex-1">
           <Input
             placeholder="Search products..."
@@ -101,6 +113,42 @@ const Products = () => {
 
       <div className="flex flex-wrap gap-4 justify-center md:justify-normal w-full">
         {/* content here */}
+        {filteredProducts.map((product) => (
+          <ProductCard
+            key={product._id}
+            productName={product.name}
+            materials={product.formula}
+            otherCosts={product.otherCosts}
+            sellingPrice={product.price}
+            handleEdit={
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleEditClick(product._id)}
+              >
+                <LucideEdit />
+              </Button>
+            }
+            handleDelete={
+              <ConfirmDialog
+                renderTrigger={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:text-red-500"
+                  >
+                    <Trash2 />
+                  </Button>
+                }
+                title="Delete Product"
+                description="Are you sure you want to delete this product?"
+                onConfirm={() => handleDelete(product._id)}
+                onCancel={() => {}}
+                confirmText="Delete"
+              />
+            }
+          />
+        ))}
       </div>
     </div>
   );

@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { XIcon, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const AddProduct = ({ isEdit = false }) => {
   const { clientId, productId } = useParams();
@@ -382,7 +383,12 @@ const AddProduct = ({ isEdit = false }) => {
           </div>
           <div className="flex justify-between">
             <span className="font-medium">Profit</span>
-            <span className="font-semibold text-green-600">
+            <span
+              className={cn(
+                "font-semibold",
+                profit < 0 ? "text-red-600" : "text-green-600"
+              )}
+            >
               ₹{profit.toFixed(2)}
             </span>
           </div>

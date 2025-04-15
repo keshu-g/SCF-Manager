@@ -66,7 +66,7 @@ const objectValidation = joi.object().required().unknown();
 
 const populateMessage = (error) => {
   let errorDetails = error.details[0];
-  console.log("errorDetails", errorDetails);
+  // console.log("errorDetails", errorDetails);
   let message = joiMessages[errorDetails.type];
   if (_.isEmpty(message)) {
     errorDetails.type = "any.custom";

@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../pages/Dashboard";
 import Client from "../pages/Client";
 import Material from "../pages/Material";
-import Products from "@/pages/products";
+import Products from "@/pages/Products";
 import AddProduct from "@/pages/AddProduct";
 import AdminLayout from "../layouts/AdminLayout";
 import Login from "../pages/Login";

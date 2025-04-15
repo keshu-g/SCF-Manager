@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import ProductMaterialsTable from "./product-materials-table";
-import ProductOtherTable from "./product-other-table";
 
 export function ProductCard() {
   return (
@@ -21,7 +20,6 @@ export function ProductCard() {
       </CardHeader>
       <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center">
         <ProductMaterialsTable />
-        <ProductOtherTable />
       </CardContent>
     </Card>
   );

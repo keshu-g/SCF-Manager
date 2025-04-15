@@ -37,6 +37,10 @@ const AppRoutes = () => {
             path="/client/:clientId/product/add"
             element={<AddProduct />}
           />
+          <Route
+            path="/client/:clientId/product/:productId"
+            element={<AddProduct />}
+          />
           <Route path="/material" element={<Material />} />
         </Route>
       </Route>

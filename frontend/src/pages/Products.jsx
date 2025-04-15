@@ -3,14 +3,18 @@ import {
   useGetProductsByClientIdQuery,
   useDeleteProductMutation,
 } from "../features/product/productApi";
+import { useGetClientQuery } from "../features/client/clientApi";
 import LoadingScreen from "@/components/loading-screen";
-import { ProductChart } from "@/components/product-chart";
 import { LucideEdit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ConfirmDialog from "@/components/confirm-dialog";
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import TooltipPop from "@/components/tooltip-pop";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ProductCard } from "@/components/product-card";
 
 const Products = () => {
   const { clientId } = useParams();
@@ -21,8 +25,10 @@ const Products = () => {
     error,
     refetch,
   } = useGetProductsByClientIdQuery(clientId);
+  const { data: client } = useGetClientQuery(clientId);
   const [deleteProduct] = useDeleteProductMutation();
   const [globalFilter, setGlobalFilter] = useState("");
+  const navigate = useNavigate();
 
   const filteredProducts = useMemo(() => {
     if (!products?.data) return [];
@@ -40,6 +46,10 @@ const Products = () => {
     });
   }, [products, globalFilter]);
 
+  useEffect(() => {
+    refetch();
+  }, [refetch, navigate]);
+
   const handleDelete = useCallback(
     async (productId) => {
       try {
@@ -52,6 +62,17 @@ const Products = () => {
     [deleteProduct, refetch]
   );
 
+  const handleEditClick = useCallback(
+    (productId) => {
+      navigate(`/client/${clientId}/product/${productId}/edit`);
+    },
+    [navigate, refetch]
+  );
+
+  const handleAddProductClick = useCallback(() => {
+    navigate(`/client/${clientId}/product/add`);
+  }, [navigate]);
+
   if (isLoading) return <LoadingScreen />;
 
   if (isError) {
@@ -62,100 +83,77 @@ const Products = () => {
   }
 
   return (
-    <div className="flex flex-wrap gap-4 p-4 justify-center md:justify-normal">
-      <div className="w-full flex justify-center md:justify-start">
-        <Input
-          placeholder="Search products..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm border-border "
-          autoComplete="search"
+    <div className="px-4 pb-4 w-full">
+      <h1 className="text-2xl font-bold my-4">{client?.data?.name}</h1>
+      <div className="flex items-center justify-between gap-2 w-full pb-4">
+        <div className="flex-1">
+          <Input
+            placeholder="Search products..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="max-w-sm border-border"
+            autoComplete="search"
+          />
+        </div>
+        <TooltipPop
+          content="Add Material"
+          trigger={
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                handleAddProductClick();
+              }}
+            >
+              <Plus />
+            </Button>
+          }
         />
       </div>
 
-      <div className="flex flex-wrap gap-4 justify-center md:justify-normal">
-        {filteredProducts.length === 0 ? (
-          <p className="text-xl p-4 w-full text-center">No products found.</p>
-        ) : (
-          filteredProducts.map((product) => {
-            const chartData = (product.formula || []).map((item) => ({
-              material: item.material.name,
-              quantity: item.quantity,
-              fill: `var(--color-${item.material.name
-                .toLowerCase()
-                .replace(/\s/g, "")})`,
-            }));
-
-            const chartColors = Array.from(
-              { length: 10 },
-              (_, i) => i + 1
-            ).sort(() => 0.5 - Math.random());
-
-            const chartConfig = {
-              quantity: { label: "Quantity" },
-            };
-
-            chartData.forEach((item, i) => {
-              const colorIndex = chartColors[i % chartColors.length];
-              chartConfig[item.material.toLowerCase().replace(/\s/g, "")] = {
-                label: item.material,
-                color: `var(--chart-${colorIndex})`,
-              };
-            });
-
-            return (
-              <ProductChart
-                key={product._id}
-                xAxisDataKey="quantity"
-                yAxisDataKey="material"
-                title={
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-xl font-semibold">{product.name}</p>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="text-blue-500"
-                      >
-                        <LucideEdit />
-                      </Button>
-                      <ConfirmDialog
-                        renderTrigger={
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="text-red-500"
-                          >
-                            <Trash2 />
-                          </Button>
-                        }
-                        title="Delete Product"
-                        description={
-                          <>
-                            Are you sure you want to delete{" "}
-                            <strong>{product.name}</strong>?
-                          </>
-                        }
-                        confirmText="Delete"
-                        confirmTextClassName="bg-red-600 text-white hover:bg-red-600/50"
-                        cancelText="Cancel"
-                        onConfirm={() => handleDelete(product._id)}
-                      />
-                    </div>
-                  </div>
+      <div className="flex flex-wrap gap-4 justify-center md:justify-normal w-full">
+        {/* content here */}
+        {filteredProducts.map((product) => (
+          <ProductCard
+            key={product._id}
+            productName={product.name}
+            materials={product.formula}
+            otherCosts={product.otherCosts}
+            sellingPrice={product.price}
+            handleEdit={
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleEditClick(product._id)}
+              >
+                <LucideEdit />
+              </Button>
+            }
+            handleDelete={
+              <ConfirmDialog
+                renderTrigger={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:text-red-500"
+                  >
+                    <Trash2 />
+                  </Button>
                 }
-                data={chartData}
-                config={chartConfig}
-                footer={
-                  <div className="flex justify-evenly items-center w-full">
-                    <Button variant="ghost">Weight 50Kg</Button>
-                    <Button variant="ghost">Price: ₹{product.price}</Button>
-                  </div>
+                title="Delete Product"
+                description={
+                  <>
+                    Are you sure you want to delete{" "}
+                    <strong>{product.name}</strong>?
+                  </>
                 }
+                onConfirm={() => handleDelete(product._id)}
+                onCancel={() => {}}
+                confirmText="Delete"
               />
-            );
-          })
-        )}
+            }
+          />
+        ))}
       </div>
     </div>
   );

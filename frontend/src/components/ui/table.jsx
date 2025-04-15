@@ -7,7 +7,7 @@ function Table({
   ...props
 }) {
   return (
-    (<div data-slot="table-container" className="relative w-full">
+    (<div data-slot="table-container" className="relative w-full overflow-x-auto">
       <table
         data-slot="table"
         className={cn("w-full caption-bottom text-sm", className)}
@@ -60,7 +60,7 @@ function TableRow({
     (<tr
       data-slot="table-row"
       className={cn(
-        "hover:bg-accent-foreground/10 data-[state=selected]:bg-muted border-b transition-colors",
+        "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
         className
       )}
       {...props} />)
@@ -75,7 +75,7 @@ function TableHead({
     (<th
       data-slot="table-head"
       className={cn(
-        "text-muted-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className
       )}
       {...props} />)

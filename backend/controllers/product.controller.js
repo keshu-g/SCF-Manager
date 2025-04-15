@@ -8,7 +8,9 @@ const getProducts = apiHandler(async (req, res) => {
 });
 
 const getProduct = apiHandler(async (req, res) => {
-  const product = await productModel.findOne({ _id: req.params.id });
+  const product = await productModel
+    .findOne({ _id: req.params.id })
+    .populate({path : "formula.material", select : "_id name price quantity"});
 
   if (!product) {
     return apiError(messages.NOT_FOUND, "Product", null, res);

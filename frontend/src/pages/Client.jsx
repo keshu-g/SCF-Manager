@@ -92,7 +92,7 @@ const Client = () => {
 
   const handleRowClick = useCallback(
     (client) => {
-      navigate(`/client/${client._id}/products`);
+      navigate(`/client/${client._id}/product`);
     },
     [navigate]
   );
@@ -231,7 +231,7 @@ const Client = () => {
               <TooltipPop
                 content="Add Client"
                 trigger={
-                  <Button variant="outline" className="ml-3">
+                  <Button variant="outline" size="icon">
                     <Plus />
                   </Button>
                 }

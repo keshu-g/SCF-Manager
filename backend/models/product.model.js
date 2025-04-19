@@ -40,6 +40,10 @@ const productSchema = new Schema(
         },
       },
     ],
+    cashDiscount: {
+      type: Number,
+      default: 0,
+    },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

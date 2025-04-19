@@ -8,6 +8,7 @@ export function ProductCard({
   materials = [],
   otherCosts = [],
   sellingPrice = 0,
+  cashDiscount = 0,
   handleEdit,
   handleDelete,
 }) {
@@ -15,8 +16,9 @@ export function ProductCard({
     (acc, item) => acc + item?.material?.price * item.quantity,
     0
   );
+  const totalCashDiscount = totalMaterialCost * (cashDiscount / 100);
   const totalOtherCost = otherCosts.reduce((acc, item) => acc + item.amount, 0);
-  const totalCost = totalMaterialCost + totalOtherCost;
+  const totalCost = totalMaterialCost + totalOtherCost + totalCashDiscount;
   const profit = sellingPrice - totalCost;
 
   return (
@@ -45,6 +47,10 @@ export function ProductCard({
             <div className="flex justify-between">
               <span>Total Material Cost</span>
               <span>₹{totalMaterialCost.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Total Cash Discount</span>
+              <span>₹{totalCashDiscount.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Total Other Cost</span>

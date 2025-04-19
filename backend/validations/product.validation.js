@@ -3,6 +3,7 @@ import {
   stringValidation,
   idValidation,
   numberValidation,
+  decimalValidation,
 } from "../utils/joi.util.js";
 
 const getProductSchema = joi.object({
@@ -14,6 +15,7 @@ const addProductSchema = joi
     client: idValidation.label("Client ID"),
     name: stringValidation.label("Product Name"),
     price: numberValidation.label("Product Price"),
+    cashDiscount: decimalValidation.label("Cash Discount").optional(),
     formula: joi.array().items(
       joi.object({
         material: idValidation.label("Material ID"),
@@ -24,7 +26,7 @@ const addProductSchema = joi
       joi.object({
         _id: idValidation.label("Other Cost ID").optional(),
         name: stringValidation.label("Other Cost Name"),
-        amount: numberValidation.label("Other Cost Amount"),
+        amount: decimalValidation.label("Other Cost Amount"),
       })
     ),
   })

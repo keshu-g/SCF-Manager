@@ -127,6 +127,15 @@ const Client = () => {
         ),
       },
       {
+        accessorKey: "productCount",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Product Count" />
+        ),
+        cell: ({ row }) => (
+          <div className="pl-1">{row.getValue("productCount") || 0}</div>
+        ),
+      },
+      {
         id: "Actions",
         cell: ({ row }) => {
           const client = row.original;

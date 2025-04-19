@@ -82,18 +82,23 @@ const deleteMaterial = apiHandler(async (req, res) => {
     return apiError(messages.ITEM_IN_USE, "Material", null, res);
   }
 
-  const materialData = await materialModel.findOneAndUpdate(
-    {
-      _id: req.params.id,
-      status: "ACTIVE",
-    },
-    {
-      $set: {
-        status: "DELETED",
-        updatedBy: req.user._id,
-      },
-    }
-  );
+  const materialData = await materialModel.findOneAndDelete({
+    _id: req.params.id,
+    status: "ACTIVE",
+  });
+
+  // const materialData = await materialModel.findOneAndUpdate(
+  //   {
+  //     _id: req.params.id,
+  //     status: "ACTIVE",
+  //   },
+  //   {
+  //     $set: {
+  //       status: "DELETED",
+  //       updatedBy: req.user._id,
+  //     },
+  //   }
+  // );
 
   if (!materialData) {
     return apiError(messages.NOT_FOUND, "Material", null, res);

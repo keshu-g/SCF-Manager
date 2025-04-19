@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import ConfirmDialog from "@/components/confirm-dialog";
 import FormSheet from "@/components/form-sheet";
 import TooltipPop from "@/components/tooltip-pop";
+import { Link } from "react-router-dom";
 
 const Client = () => {
   const navigate = useNavigate();
@@ -43,6 +44,10 @@ const Client = () => {
 
   const handleCopyID = useCallback((id) => {
     navigator.clipboard.writeText(id);
+    toast.success("Client ID copied to clipboard", {
+      description: id,
+      duration: 2000,
+    });
   }, []);
 
   const handleDelete = useCallback(
@@ -104,7 +109,13 @@ const Client = () => {
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Name" />
         ),
-        cell: ({ row }) => <div className="pl-1">{row.getValue("name")}</div>,
+        cell: ({ row }) => (
+          <div className="pl-1 hover:text-blue-500">
+            <Link to={`/client/${row.original._id}/product`}>
+              {row.getValue("name")}
+            </Link>
+          </div>
+        ),
       },
       {
         accessorKey: "address",
@@ -116,6 +127,15 @@ const Client = () => {
         ),
       },
       {
+        accessorKey: "productCount",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Product Count" />
+        ),
+        cell: ({ row }) => (
+          <div className="pl-1">{row.getValue("productCount") || 0}</div>
+        ),
+      },
+      {
         id: "Actions",
         cell: ({ row }) => {
           const client = row.original;
@@ -124,16 +144,26 @@ const Client = () => {
             <div className="flex justify-end -ml-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-6 w-8 p-0">
+                  <Button
+                    variant="ghost"
+                    className="h-6 w-8 p-0"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <span className="sr-only">Open menu</span>
                     <MoreHorizontal className="h-6 w-6" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => handleCopyID(client._id)}>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation(); // 🔥 prevent triggering row click
+                      handleCopyID(client._id);
+                    }}
+                  >
                     Copy Client ID
                   </DropdownMenuItem>
+
                   <DropdownMenuSeparator />
                   <div className="focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground">
                     <FormSheet
@@ -166,6 +196,7 @@ const Client = () => {
                       <DropdownMenuItem
                         className="text-red-600"
                         onSelect={(e) => e.preventDefault()}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         Delete Client
                       </DropdownMenuItem>
@@ -180,7 +211,10 @@ const Client = () => {
                     confirmText="Delete"
                     confirmTextClassName="bg-red-600 text-white hover:bg-red-600/50"
                     cancelText="Cancel"
-                    onConfirm={() => handleDelete(client)}
+                    onConfirm={(e) => {
+                      e.stopPropagation(); // 🔥 prevent triggering row click
+                      handleDelete(client);
+                    }}
                   />
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -205,7 +239,7 @@ const Client = () => {
       <DataTable
         columns={columns}
         data={memorizedClients}
-        onRowClick={handleRowClick}
+        // onRowClick={handleRowClick}
         additionalActions={
           <FormSheet
             title="Add Client"

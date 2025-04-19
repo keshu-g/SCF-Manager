@@ -3,7 +3,27 @@ import { apiResponse, apiError, apiHandler } from "../utils/api.util.js";
 import messages from "../utils/messages.util.js";
 
 const getClients = apiHandler(async (req, res) => {
-  const clients = await clientModel.find();
+  const clients = await clientModel.aggregate([
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id",
+        foreignField: "client",
+        as: "products",
+      },
+    },
+    {
+      $addFields: {
+        productCount: { $size: "$products" },
+      },
+    },
+    {
+      $project: {
+        products: 0,
+      },
+    },
+  ]);
+
   return apiResponse(messages.FETCH, "Clients", clients, res);
 });
 

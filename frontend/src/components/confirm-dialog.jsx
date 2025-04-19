@@ -31,8 +31,13 @@ const ConfirmDialog = ({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{cancelText}</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className={confirmTextClassName}>
+          <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+            {cancelText}
+          </AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            className={confirmTextClassName}
+          >
             {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -172,7 +172,7 @@ const FormSheet = ({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <div>{trigger}</div>
+        <div onClick={(e) => e.stopPropagation()}>{trigger}</div>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader className="pb-0">
@@ -232,7 +232,10 @@ const FormSheet = ({
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => setOpen(false)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen(false);
+                }}
               >
                 Cancel
               </Button>

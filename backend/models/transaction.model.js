@@ -1,5 +1,5 @@
-import { before } from "lodash";
 import { Schema, model } from "mongoose";
+
 const transactionSchema = new Schema(
   {
     type: {
@@ -14,7 +14,11 @@ const transactionSchema = new Schema(
           ref: "Material",
           required: true,
         },
-        action: { type: String, enum: ["ADD", "REMOVE"], required: true },
+        action: {
+          type: String,
+          enum: ["ADD", "REMOVE"],
+          required: true,
+        },
         quantity: {
           type: Number,
           required: true,
@@ -31,6 +35,10 @@ const transactionSchema = new Schema(
       },
     ],
     product: {
+      client: {
+        type: Schema.Types.ObjectId,
+        ref: "Client",
+      },
       product: {
         type: Schema.Types.ObjectId,
         ref: "Product",

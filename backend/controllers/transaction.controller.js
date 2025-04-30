@@ -62,16 +62,52 @@ const manufactureProduct = apiHandler(async (req, res) => {
   return apiResponse(messages.ADD_SUCCESS, "Transaction", transaction, res);
 });
 
-// const materialTransaction = apiHandler(async (req, res) => {
-//   const { materials, description } = req.body;
+const materialTransaction = apiHandler(async (req, res) => {
+  const { materials, description } = req.body;
 
-//   for (let material of materials) {
-//     let materialId = material.materialId;
-//   }
+  for (let material of materials) {
+    let materialId = material.materialId;
+    let action = material.action;
+    let quantity = material.quantity;
 
+    let materialData = await materialModel.findById(materialId);
 
-  
-//   return apiResponse(messages.ADD_SUCCESS, "Transaction", transaction, res);
-// });
+    if (!materialData) {
+      return apiError(messages.NOT_FOUND, "Material", null, res);
+    }
+
+    if (action === "IN") {
+      await materialModel.findByIdAndUpdate(materialId, {
+        $inc: { quantity: quantity },
+      });
+
+      material.beforeQuantity = materialData.quantity;
+      material.afterQuantity = materialData.quantity + quantity;
+    } else if (action === "OUT") {
+      await materialModel.findByIdAndUpdate(materialId, {
+        $inc: { quantity: -quantity },
+      });
+
+      material.beforeQuantity = materialData.quantity;
+      material.afterQuantity = materialData.quantity - quantity;
+    }
+  }
+
+  let transaction = new transactionModel({
+    type: "MATERIAL",
+    materials: materials.map((material) => ({
+      material: material.materialId,
+      action: material.action,
+      actionQuantity: material.actionQuantity,
+      beforeQuantity: material.beforeQuantity,
+      afterQuantity: material.afterQuantity,
+    })),
+    description: description,
+    createdBy: req.user._id,
+    updatedBy: req.user._id,
+  });
+
+  return apiResponse(messages.ADD_SUCCESS, "Transaction", transaction, res);
+});
 
 export { manufactureProduct };

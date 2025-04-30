@@ -19,7 +19,7 @@ const transactionSchema = new Schema(
           enum: ["ADD", "REMOVE"],
           required: true,
         },
-        quantity: {
+        actionQuantity: {
           type: Number,
           required: true,
           min: [0, "Quantity can't be negative"],

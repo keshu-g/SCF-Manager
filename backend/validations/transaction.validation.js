@@ -17,10 +17,10 @@ const materialTransactionSchema = joi.object({
     joi.object({
       materialId: idValidation.label("Material ID"),
       action: joi.string().valid("ADD", "REMOVE").label("Action"),
-      quantity: numberValidation.label("Quantity").min(1),
+      actionQuantity: numberValidation.label("Quantity").min(1),
     })
   ),
   description: stringValidation.label("Description").optional(),
 }).unknown(false);
 
-export { manufactureProductSchema };
+export { manufactureProductSchema, materialTransactionSchema };

@@ -68,7 +68,7 @@ const materialTransaction = apiHandler(async (req, res) => {
   for (let material of materials) {
     let materialId = material.materialId;
     let action = material.action;
-    let quantity = material.quantity;
+    let actionQuantity = material.actionQuantity;
 
     let materialData = await materialModel.findById(materialId);
 
@@ -78,21 +78,20 @@ const materialTransaction = apiHandler(async (req, res) => {
 
     if (action === "IN") {
       await materialModel.findByIdAndUpdate(materialId, {
-        $inc: { quantity: quantity },
+        $inc: { quantity: actionQuantity },
       });
 
       material.beforeQuantity = materialData.quantity;
-      material.afterQuantity = materialData.quantity + quantity;
+      material.afterQuantity = materialData.quantity + actionQuantity;
     } else if (action === "OUT") {
       await materialModel.findByIdAndUpdate(materialId, {
-        $inc: { quantity: -quantity },
+        $inc: { quantity: -actionQuantity },
       });
 
       material.beforeQuantity = materialData.quantity;
-      material.afterQuantity = materialData.quantity - quantity;
+      material.afterQuantity = materialData.quantity - actionQuantity;
     }
   }
-
   let transaction = new transactionModel({
     type: "MATERIAL",
     materials: materials.map((material) => ({
@@ -110,4 +109,4 @@ const materialTransaction = apiHandler(async (req, res) => {
   return apiResponse(messages.ADD_SUCCESS, "Transaction", transaction, res);
 });
 
-export { manufactureProduct };
+export { manufactureProduct, materialTransaction };

@@ -1,5 +1,47 @@
 import { Schema, model } from "mongoose";
 
+const materialSchema = new Schema({
+  material: {
+    type: Schema.Types.ObjectId,
+    ref: "Material",
+  },
+  action: {
+    type: String,
+    enum: ["ADD", "REMOVE"],
+  },
+  actionQuantity: {
+    type: Number,
+    min: [0, "Quantity can't be negative"],
+  },
+  beforeQuantity: {
+    type: Number,
+  },
+  afterQuantity: {
+    type: Number,
+  },
+});
+
+const productSchema = new Schema({
+  client: {
+    type: Schema.Types.ObjectId,
+    ref: "Client",
+  },
+  product: {
+    type: Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: [0, "Quantity can't be negative"],
+  },
+  summery: {
+    type: Schema.Types.Mixed,
+    required: true,
+  }
+});
+
 const transactionSchema = new Schema(
   {
     type: {
@@ -7,52 +49,13 @@ const transactionSchema = new Schema(
       enum: ["MATERIAL", "PRODUCT"],
       required: true,
     },
-    materials: [
-      {
-        material: {
-          type: Schema.Types.ObjectId,
-          ref: "Material",
-          required: true,
-        },
-        action: {
-          type: String,
-          enum: ["ADD", "REMOVE"],
-          required: true,
-        },
-        actionQuantity: {
-          type: Number,
-          required: true,
-          min: [0, "Quantity can't be negative"],
-        },
-        beforeQuantity: {
-          type: Number,
-          required: true,
-        },
-        afterQuantity: {
-          type: Number,
-          required: true,
-        },
-      },
-    ],
+    materials: {
+      type: [materialSchema],
+      required: false,
+    },
     product: {
-      client: {
-        type: Schema.Types.ObjectId,
-        ref: "Client",
-      },
-      product: {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-        min: [0, "Quantity can't be negative"],
-      },
-      summery: {
-        type: Schema.Types.Mixed,
-        required: true,
-      },
+      type: productSchema,
+      required: false,
     },
     description: {
       type: String,

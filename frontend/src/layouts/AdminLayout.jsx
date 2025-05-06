@@ -16,13 +16,14 @@ import {
 import { ModeToggle } from "@/components/mode-toggle";
 import { Outlet, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
+import Transaction from "@/pages/Transaction";
 
 const pageNames = {
   dashboard: "Dashboard",
   client: "Clients",
   material: "Materials",
   products: "Products",
-  orders: "Orders",
+  transaction: "Transactions",
 };
 
 const generateBreadcrumbs = (pathname) => {

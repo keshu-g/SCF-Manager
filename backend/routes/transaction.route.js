@@ -3,6 +3,7 @@ import { validate } from "../middlewares/validation.middleware.js";
 import {
   manufactureProduct,
   materialTransaction,
+  getTransactions,
 } from "../controllers/transaction.controller.js";
 import {
   manufactureProductSchema,
@@ -22,5 +23,7 @@ router.post(
   validate(materialTransactionSchema, "body"),
   materialTransaction
 );
+
+router.get("/", getTransactions);
 
 export default router;

@@ -76,14 +76,14 @@ const materialTransaction = apiHandler(async (req, res) => {
       return apiError(messages.NOT_FOUND, "Material", null, res);
     }
 
-    if (action === "IN") {
+    if (action === "ADD") {
       await materialModel.findByIdAndUpdate(materialId, {
         $inc: { quantity: actionQuantity },
       });
 
       material.beforeQuantity = materialData.quantity;
       material.afterQuantity = materialData.quantity + actionQuantity;
-    } else if (action === "OUT") {
+    } else if (action === "REMOVE") {
       await materialModel.findByIdAndUpdate(materialId, {
         $inc: { quantity: -actionQuantity },
       });
@@ -106,7 +106,14 @@ const materialTransaction = apiHandler(async (req, res) => {
     updatedBy: req.user._id,
   });
 
+  await transaction.save();
+
   return apiResponse(messages.ADD_SUCCESS, "Transaction", transaction, res);
 });
 
-export { manufactureProduct, materialTransaction };
+const getTransactions = apiHandler(async (req, res) => {
+  const transactions = await transactionModel.find().sort({ createdAt: -1 });
+  return apiResponse(messages.FETCH, "Transactions", transactions, res);
+});
+
+export { manufactureProduct, materialTransaction, getTransactions };

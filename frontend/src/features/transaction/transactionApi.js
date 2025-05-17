@@ -2,6 +2,9 @@ import apiSlice from "../common/apiSlice";
 
 export const transactionApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getTransactions: builder.query({
+      query: () => "/transaction",
+    }),
     manufactureProduct: builder.mutation({
       query: (data) => ({
         url: "/transaction/manufacture",
@@ -19,5 +22,8 @@ export const transactionApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useManufactureProductMutation, useMaterialTransactionMutation } =
-  transactionApi;
+export const {
+  useGetTransactionsQuery,
+  useManufactureProductMutation,
+  useMaterialTransactionMutation,
+} = transactionApi;

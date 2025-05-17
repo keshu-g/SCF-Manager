@@ -112,7 +112,19 @@ const materialTransaction = apiHandler(async (req, res) => {
 });
 
 const getTransactions = apiHandler(async (req, res) => {
-  const transactions = await transactionModel.find().sort({ createdAt: -1 });
+  const transactions = await transactionModel
+    .find()
+    .sort({ createdAt: -1 })
+    .populate([
+      {
+        path: "product.product",
+        select: "_id name",
+      },
+      {
+        path: "product.client",
+        select: "_id name",
+      }
+    ]);
   return apiResponse(messages.FETCH, "Transactions", transactions, res);
 });
 

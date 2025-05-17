@@ -1,21 +1,47 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import FormSheet from "@/components/form-sheet";
-
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * The Transaction component is a form that allows the user to create a new material or product
-
- * The form also has a submit button that calls the handleCreate function when clicked
- * The component also renders a button to manage materials
- * The component is wrapped in a container div with a class of "container" and a style of "mx-auto h-full p-4 flex flex-col gap-4"
- * The component is rendered inside a Sheet component with a title of "Add Material" and a description of "Add new material details here."
- * The component has a trigger prop that renders a button with the text "Manufacture Product" that opens the sheet when clicked
- */
+import { useGetClientsQuery } from "../features/client/clientApi";
+import { useGetProductsByClientIdQuery } from "../features/product/productApi";
+import { useManufactureProductMutation } from "../features/transaction/transactionApi";
+import { toast } from "sonner";
 
 const Transaction = () => {
-  const handleCreate = () => {};
+  const { data: clients } = useGetClientsQuery();
+  const [createTransaction] = useManufactureProductMutation();
+  const [clientId, setClientId] = useState(null);
+
+  const {
+    data: productsData,
+    isLoading: isProductsLoading,
+    isError,
+  } = useGetProductsByClientIdQuery(clientId, {
+    skip: !clientId,
+  });
+
+  const handleClientChange = (clientId) => {
+    setClientId(clientId); // this triggers the query
+  };
+
+  const handleCreate = useCallback(
+    async (newTransaction) => {
+      try {
+        console.log("new transaction : ", newTransaction);
+
+        const response = await createTransaction({
+          productId: newTransaction.product,
+          quantity: newTransaction.quantity,
+          description: newTransaction?.description,
+        }).unwrap();
+        toast.success(response.message || "Manufactured successfully");
+      } catch (error) {
+        console.log(error);
+        toast.error(error?.data?.message || "Failed to create material");
+      }
+    },
+    [createTransaction]
+  );
 
   return (
     <div className="container mx-auto h-full p-4 flex flex-col gap-4">
@@ -30,13 +56,11 @@ const Transaction = () => {
               type: "select",
               // selectLabel: "Select Unit",
               placeholder: "Select Client",
-              options: [
-                { value: "kilogram", label: "⚖️ Kilogram" },
-                { value: "gram", label: "📏 Gram" },
-                { value: "liter", label: "🧴 Liter" },
-                { value: "milliliter", label: "💧 Milliliter" },
-                { value: "piece", label: "📦 Pieces" },
-              ],
+              options: clients?.data.map((client) => ({
+                value: client._id,
+                label: client.name,
+              })),
+              onchange: handleClientChange,
               required: true,
               autoComplete: "off",
             },
@@ -44,15 +68,13 @@ const Transaction = () => {
               label: "Product",
               name: "product",
               type: "select",
-              // selectLabel: "Select Unit",
+              selectLabel: "Products of selected client",
               placeholder: "Select product",
-              options: [
-                { value: "kilogram", label: "⚖️ Kilogram" },
-                { value: "gram", label: "📏 Gram" },
-                { value: "liter", label: "🧴 Liter" },
-                { value: "milliliter", label: "💧 Milliliter" },
-                { value: "piece", label: "📦 Pieces" },
-              ],
+              options:
+                productsData?.data?.map((product) => ({
+                  value: product._id,
+                  label: product.name,
+                })) || [],
               required: true,
               autoComplete: "off",
             },

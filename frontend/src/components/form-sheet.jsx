@@ -149,6 +149,10 @@ const FormSheet = ({
                 options={fieldConfig.options}
                 selectLabel={fieldConfig.selectLabel}
                 placeholder={fieldConfig.placeholder}
+                onValueChange={(val) => {
+                  field.onChange(val);
+                  fieldConfig.onchange?.(val); // call custom onchange if exists
+                }}
               />
             )}
           />

@@ -4,11 +4,18 @@ import { Sheet } from "@/components/ui/sheet";
 import FormSheet from "@/components/form-sheet";
 import { useGetClientsQuery } from "../features/client/clientApi";
 import { useGetProductsByClientIdQuery } from "../features/product/productApi";
-import { useManufactureProductMutation } from "../features/transaction/transactionApi";
+import {
+  useManufactureProductMutation,
+  useGetTransactionsQuery,
+} from "../features/transaction/transactionApi";
 import { toast } from "sonner";
+import TransactionTable from "@/components/transaction-table";
+import LoadingScreen from "@/components/loading-screen";
 
 const Transaction = () => {
   const { data: clients } = useGetClientsQuery();
+  const { data: transactions, isLoading: isTransactionsLoading } =
+    useGetTransactionsQuery();
   const [createTransaction] = useManufactureProductMutation();
   const [clientId, setClientId] = useState(null);
 
@@ -42,6 +49,8 @@ const Transaction = () => {
     },
     [createTransaction]
   );
+
+  if (isTransactionsLoading || isProductsLoading) return <LoadingScreen />;
 
   return (
     <div className="container mx-auto h-full p-4 flex flex-col gap-4">
@@ -101,7 +110,9 @@ const Transaction = () => {
         <Button>Manage Materials</Button>
       </div>
 
-      <div className="h-full border rounded-sm p-4"></div>
+      <div className="h-full border rounded-sm p-4">
+        <TransactionTable transactions={transactions.data} />
+      </div>
     </div>
   );
 };

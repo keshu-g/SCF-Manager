@@ -28,7 +28,7 @@ const TransactionProductMaterialTable = ({
   ],
 }) => {
   const totalMaterialCost = materials.reduce(
-    (acc, item) => acc + item?.price * item.quantity,
+    (acc, item) => acc + item.totalPrice,
     0
   );
 
@@ -56,7 +56,7 @@ const TransactionProductMaterialTable = ({
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.totalQuantity}</TableCell>
                 <TableCell className="text-right">
-                  ₹{(item?.price * item.quantity).toFixed(2)}
+                  ₹{item?.totalPrice?.toFixed(2)}
                 </TableCell>
               </TableRow>
             ))}

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ProductOtherTable from "./product-other-table";
 import { cn } from "@/lib/utils";
 import TransactionProductMaterialTable from "./transaction-product-material-table";
+import { Badge } from "./ui/badge";
 
 const TransactionProductCard = ({
   productName = "Good Product Name",
@@ -16,21 +17,31 @@ const TransactionProductCard = ({
   //   handleDelete,
 }) => {
   const totalMaterialCost = materials.reduce(
-    (acc, item) => acc + item?.price * item.quantity,
+    (acc, item) => acc + item?.totalPrice,
     0
   );
   const totalCashDiscount = totalMaterialCost * (cashDiscount / 100);
   const totalOtherCost = otherCosts.reduce((acc, item) => acc + item.amount, 0);
   const totalCost = totalMaterialCost + totalOtherCost + totalCashDiscount;
-  const profit = sellingPrice - totalCost;
+  const profit = (sellingPrice * quantityManufactured) - totalCost;
 
   return (
     <Card className="gap-4 w-full">
       <CardHeader className="flex items-center justify-between ">
-        <CardTitle className="text-lg">
-          {productName} x {quantityManufactured}
+        <CardTitle className="text-lg space-x-2">
+          <Badge className="text-sm">
+            {productName}
+          </Badge>
+          <Badge className="text-sm">
+            {quantityManufactured} Manufactured
+          </Badge>
+          <Badge className="text-sm">
+            Client - {clientName} 
+          </Badge>
+          <Badge className="text-sm">
+            Selling Price - ₹{sellingPrice}
+          </Badge>
         </CardTitle>
-        <CardTitle className="text-lg">{clientName}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center">
         <TransactionProductMaterialTable materials={materials} />
@@ -85,8 +96,11 @@ const TransactionTable = ({ transactions }) => {
         <TransactionProductCard
           productName={transaction?.product?.product?.name}
           clientName={transaction?.product?.client?.name}
+          sellingPrice={transaction?.product?.summery?.sellingPrice}
           quantityManufactured={transaction?.product?.quantity}
           materials={transaction?.product?.summery?.material}
+          otherCosts={transaction?.product?.summery?.otherCosts}
+          cashDiscount={transaction?.product?.summery?.cashDiscount}
         />
       ))}
     </div>

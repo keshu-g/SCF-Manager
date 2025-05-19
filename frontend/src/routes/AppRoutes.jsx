@@ -4,6 +4,7 @@ import Client from "../pages/Client";
 import Material from "../pages/Material";
 import Products from "@/pages/Products";
 import AddProduct from "@/pages/AddProduct";
+import Transaction from "../pages/Transaction";
 import AdminLayout from "../layouts/AdminLayout";
 import Login from "../pages/Login";
 import ProtectedRoute from "./ProtectedRoute"; // Import the protected route wrapper
@@ -42,6 +43,7 @@ const AppRoutes = () => {
             element={<AddProduct />}
           />
           <Route path="/material" element={<Material />} />
+          <Route path="/transaction" element={<Transaction />} />
         </Route>
       </Route>
 

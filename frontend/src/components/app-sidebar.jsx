@@ -2,9 +2,9 @@ import * as React from "react";
 import {
   PawPrintIcon,
   BookUserIcon,
-  SquareSigmaIcon,
   ShapesIcon,
   LayoutDashboard,
+  ArrowRightLeftIcon
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -129,6 +129,11 @@ const data = {
       name: "Clients",
       url: "/client",
       icon: BookUserIcon,
+    },
+    {
+      name: "Transaction",
+      url: "/transaction",
+      icon: ArrowRightLeftIcon,
     }
   ],
 };

@@ -41,9 +41,9 @@ const TransactionProductMaterialTable = ({
         <Table className="min-w-max">
           <TableHeader>
             <TableRow className="w-full">
-              <TableHead className="w-1/5 sm:w-1/4">Material</TableHead>
-              <TableHead className="w-1/5 sm:w-1/4">Price</TableHead>
-              <TableHead className="">Quantity</TableHead>
+              <TableHead className="">Material</TableHead>
+              {/* <TableHead className="w-1/5 sm:w-1/4">Price</TableHead>
+              <TableHead className="">Quantity</TableHead> */}
               <TableHead className="">Total Quantity</TableHead>
               <TableHead className="text-right">Total Price</TableHead>
             </TableRow>
@@ -52,8 +52,8 @@ const TransactionProductMaterialTable = ({
             {materials.map((item, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{item?.name}</TableCell>
-                <TableCell>₹{item?.price?.toFixed(2)}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
+                {/* <TableCell>₹{item?.price?.toFixed(2)}</TableCell>
+                <TableCell>{item.quantity}</TableCell> */}
                 <TableCell>{item.totalQuantity}</TableCell>
                 <TableCell className="text-right">
                   ₹{item?.totalPrice?.toFixed(2)}
@@ -66,8 +66,8 @@ const TransactionProductMaterialTable = ({
               <TableCell colSpan={2} className="font-semibold">
                 Total
               </TableCell>
-              <TableCell className="font-semibold">{totalWeight} kg</TableCell>
-              <TableCell className="font-semibold"></TableCell>
+              {/* <TableCell className="font-semibold">{totalWeight} kg</TableCell>
+              <TableCell className="font-semibold"></TableCell> */}
               <TableCell className="font-semibold text-right">
                 ₹{totalMaterialCost?.toFixed(2)}
               </TableCell>

@@ -6,8 +6,8 @@ import TransactionProductMaterialTable from "./transaction-product-material-tabl
 import { Badge } from "./ui/badge";
 
 const TransactionProductCard = ({
-  productName = "Good Product Name",
-  clientName = "Client Name",
+  productName = "Not Found",
+  clientName = "Not Found",
   quantityManufactured = 0,
   materials = [],
   otherCosts = [],
@@ -27,8 +27,8 @@ const TransactionProductCard = ({
 
   return (
     <Card className="gap-4 w-full">
-      <CardHeader className="flex items-center justify-between ">
-        <CardTitle className="text-lg space-x-2">
+      <CardHeader className="flex items-center justify-between px-4 sm:px-6">
+        <CardTitle className="text-lg space-x-2 space-y-1">
           <Badge className="text-sm">
             {productName}
           </Badge>
@@ -43,7 +43,7 @@ const TransactionProductCard = ({
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center">
+      <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center px-4 sm:px-6">
         <TransactionProductMaterialTable materials={materials} />
         <ProductOtherTable otherCosts={otherCosts} />
         <div className="border rounded-xl p-4 shadow-sm min-w-[300px] w-full">

@@ -65,7 +65,7 @@ const Transaction = () => {
               type: "select",
               // selectLabel: "Select Unit",
               placeholder: "Select Client",
-              options: clients?.data.map((client) => ({
+              options: clients?.data?.map((client) => ({
                 value: client._id,
                 label: client.name,
               })),
@@ -110,7 +110,7 @@ const Transaction = () => {
         <Button>Manage Materials</Button>
       </div>
 
-      <div className="h-full border rounded-sm p-4">
+      <div className="h-full rounded-sm p-0 sm:p-4 sm:border">
         <TransactionTable transactions={transactions.data} />
       </div>
     </div>

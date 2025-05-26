@@ -60,7 +60,7 @@ const Material = () => {
         let updatedData = {
           id: updatedMaterial._id,
           name: updatedMaterial.name,
-          quantity: updatedMaterial.quantity,
+          // quantity: updatedMaterial.quantity,
           description: updatedMaterial.description,
           price: updatedMaterial.price,
           unit: updatedMaterial.unit
@@ -205,13 +205,13 @@ const Material = () => {
                         required: true,
                         autoComplete: "name",
                       },
-                      {
-                        label: "Quantity",
-                        name: "quantity",
-                        type: "number",
-                        required: true,
-                        autoComplete: "off",
-                      },
+                      // {
+                      //   label: "Quantity",
+                      //   name: "quantity",
+                      //   type: "number",
+                      //   required: true,
+                      //   autoComplete: "off",
+                      // },
                       {
                         label: "Price",
                         name: "price",

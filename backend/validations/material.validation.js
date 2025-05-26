@@ -25,8 +25,10 @@ const addMaterialSchema = joi
   })
   .unknown(false);
 
-const updateMaterialSchema = addMaterialSchema.keys({
-  id: idValidation,
-});
+const updateMaterialSchema = addMaterialSchema
+  .keys({
+    id: idValidation,
+  })
+  .fork(['quantity'], () => joi.forbidden());
 
 export { getMaterialSchema, addMaterialSchema, updateMaterialSchema };

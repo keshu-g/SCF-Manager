@@ -94,6 +94,7 @@ const TransactionTable = ({ transactions }) => {
     <div className="flex flex-col gap-4">
       {transactions?.map((transaction) => (
         <TransactionProductCard
+          key={transaction?._id}
           productName={transaction?.product?.product?.name}
           clientName={transaction?.product?.client?.name}
           sellingPrice={transaction?.product?.summery?.sellingPrice}

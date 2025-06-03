@@ -118,26 +118,30 @@ const FormSheet = ({
   };
 
   const renderField = useCallback((fieldConfig, formField) => {
+    const commonProps = {
+      ...formField,
+      disabled: fieldConfig.isLoading,
+      autoComplete: fieldConfig.autoComplete,
+      placeholder: fieldConfig.label,
+    };
+
     if (fieldConfig.component) {
       return <fieldConfig.component {...formField} {...fieldConfig} />;
     }
 
     switch (fieldConfig.type) {
       case "textarea":
-        return (
-          <Textarea
-            {...formField}
-            placeholder={fieldConfig.label}
-            autoComplete={fieldConfig.autoComplete}
-          />
-        );
+        return <Textarea {...commonProps} />;
+
       case "checkbox":
         return (
           <Checkbox
             checked={!!formField.value}
             onCheckedChange={formField.onChange}
+            disabled={fieldConfig.isLoading}
           />
         );
+
       case "select":
         return (
           <Controller
@@ -149,9 +153,10 @@ const FormSheet = ({
                 options={fieldConfig.options}
                 selectLabel={fieldConfig.selectLabel}
                 placeholder={fieldConfig.placeholder}
+                disabled={fieldConfig.isLoading}
                 onValueChange={(val) => {
                   field.onChange(val);
-                  fieldConfig.onchange?.(val); // call custom onchange if exists
+                  fieldConfig.onchange?.(val);
                 }}
               />
             )}
@@ -163,11 +168,9 @@ const FormSheet = ({
       default:
         return (
           <Input
-            {...formField}
-            value={formField.value ?? ""}
+            {...commonProps}
             type={fieldConfig.type}
-            placeholder={fieldConfig.label}
-            autoComplete={fieldConfig.autoComplete}
+            value={formField.value ?? ""}
           />
         );
     }
@@ -197,7 +200,12 @@ const FormSheet = ({
                 render={({ field: formField }) => (
                   <FormItem>
                     {field.type !== "hidden" && field.type !== "checkbox" && (
-                      <FormLabel>{field.label}</FormLabel>
+                      <FormLabel>
+                        {field.label}
+                        {field.isLoading && (
+                          <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                        )}
+                      </FormLabel>
                     )}
                     <FormControl>
                       <div className="flex items-center gap-3">

@@ -34,7 +34,6 @@ const TransactionProductMaterialTable = ({
 
   const totalWeight = materials.reduce((acc, item) => acc + item.quantity, 0);
 
-  console.log("Materials", materials);
   return (
     <div className="rounded-2xl border shadow-sm p-3 basis-[calc(50%-1rem)] flex-1 min-w-[300px]">
       <div className="w-full overflow-x-auto">

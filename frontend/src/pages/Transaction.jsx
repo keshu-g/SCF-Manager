@@ -34,8 +34,6 @@ const Transaction = () => {
   const handleCreate = useCallback(
     async (newTransaction) => {
       try {
-        console.log("new transaction : ", newTransaction);
-
         const response = await createTransaction({
           productId: newTransaction.product,
           quantity: newTransaction.quantity,
@@ -50,7 +48,7 @@ const Transaction = () => {
     [createTransaction]
   );
 
-  if (isTransactionsLoading || isProductsLoading) return <LoadingScreen />;
+  if (isTransactionsLoading) return <LoadingScreen />;
 
   return (
     <div className="container mx-auto h-full p-4 flex flex-col gap-4">
@@ -86,6 +84,7 @@ const Transaction = () => {
                 })) || [],
               required: true,
               autoComplete: "off",
+              isLoading: isProductsLoading,
             },
             {
               label: "Quantity",
@@ -111,7 +110,11 @@ const Transaction = () => {
       </div>
 
       <div className="h-full rounded-sm p-0 sm:p-4 sm:border">
-        <TransactionTable transactions={transactions.data} />
+        <TransactionTable
+          transactions={transactions.data.filter(
+            (transaction) => transaction?.type === "PRODUCT"
+          )}
+        />
       </div>
     </div>
   );

@@ -237,7 +237,7 @@ const FormSheet = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6 px-4"
+            className="space-y-6 px-4 h-full overflow-y-auto"
           >
             {fields.map((field) => (
               <FormField
@@ -295,6 +295,7 @@ const FormSheet = ({
                   e.stopPropagation();
                   setOpen(false);
                 }}
+                className={"mb-4"}
               >
                 Cancel
               </Button>

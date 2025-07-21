@@ -154,11 +154,7 @@ const Transaction = () => {
               autoComplete: "off",
               isLoading: isMaterialsLoading,
               onchange: (selected) => {
-
-                console.log(selected, materialQuantities);
                 const selectedArr = selected || [];
-                const selectedIds = selectedArr.map((mat) => mat.value);
-
                 // Reset selected materials
                 setSelectedMaterials(selectedArr);
 

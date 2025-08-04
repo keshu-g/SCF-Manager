@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SelectInput } from "./select-input";
+import MultipleSelector from "./ui/multiselect";
 import { useState } from "react";
 import {
   Form,
@@ -25,10 +26,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
 import { Loader2 } from "lucide-react";
 
 // Dynamic Schema Generator
-const createSchema = (fields) =>
+const createSchema = (fields = []) =>
   z.object(
     fields.reduce((acc, field) => {
       let validator;
@@ -41,6 +43,7 @@ const createSchema = (fields) =>
             validator = validator.min(1, `${field.label} is required`);
           }
           break;
+
         case "number":
           validator = z.preprocess(
             (val) => (val === "" ? undefined : Number(val)),
@@ -49,21 +52,34 @@ const createSchema = (fields) =>
               .min(0, "Value must be greater than or equal to zero")
           );
           break;
+
         case "email":
           validator = z.string().trim().email("Invalid email address");
           break;
+
         case "checkbox":
           validator = z.boolean();
           break;
+
         case "hidden":
           validator = z.any();
           break;
+
+        case "select":
+          validator = z.string();
+          break;
+
+        case "multiselect":
+          validator = z
+            .array(z.object({ value: z.string(), label: z.string() }))
+            .min(1, `${field.label} is required`);
+          break;
+
         default:
           validator = z.string();
           break;
       }
 
-      // ✅ Only apply `.optional()` if `required: false`
       if (!field.required) {
         validator = validator.optional();
       }
@@ -117,27 +133,31 @@ const FormSheet = ({
     }
   };
 
-  const renderField = useCallback((fieldConfig, formField) => {
+  const renderField = useCallback((fieldConfig, formField, fieldState) => {
+    const commonProps = {
+      ...formField,
+      disabled: fieldConfig.isLoading,
+      autoComplete: fieldConfig.autoComplete,
+      placeholder: fieldConfig.label,
+    };
+
     if (fieldConfig.component) {
       return <fieldConfig.component {...formField} {...fieldConfig} />;
     }
 
     switch (fieldConfig.type) {
       case "textarea":
-        return (
-          <Textarea
-            {...formField}
-            placeholder={fieldConfig.label}
-            autoComplete={fieldConfig.autoComplete}
-          />
-        );
+        return <Textarea {...commonProps} />;
+
       case "checkbox":
         return (
           <Checkbox
             checked={!!formField.value}
             onCheckedChange={formField.onChange}
+            disabled={fieldConfig.isLoading}
           />
         );
+
       case "select":
         return (
           <Controller
@@ -149,10 +169,40 @@ const FormSheet = ({
                 options={fieldConfig.options}
                 selectLabel={fieldConfig.selectLabel}
                 placeholder={fieldConfig.placeholder}
+                disabled={fieldConfig.isLoading}
                 onValueChange={(val) => {
                   field.onChange(val);
-                  fieldConfig.onchange?.(val); // call custom onchange if exists
+                  fieldConfig.onchange?.(val);
                 }}
+              />
+            )}
+          />
+        );
+
+      case "multiselect":
+        return (
+          <Controller
+            control={form.control}
+            name={fieldConfig.name}
+            render={({ field, fieldState }) => (
+              <MultipleSelector
+                className={`w-full ${
+                  fieldState?.error ? "border border-red-500 ring-red-500" : ""
+                }`}
+                commandProps={{
+                  label: fieldConfig.commandLabel || "Select",
+                }}
+                defaultOptions={fieldConfig.options || []}
+                placeholder={fieldConfig.placeholder}
+                value={field.value || []}
+                onChange={(val) => {
+                  field.onChange(val);
+                  fieldConfig.onchange?.(val);
+                }}
+                onSearch={fieldConfig.onSearch}
+                emptyIndicator={
+                  <p className="text-center text-sm">No results found</p>
+                }
               />
             )}
           />
@@ -160,14 +210,14 @@ const FormSheet = ({
 
       case "hidden":
         return <input type="hidden" {...formField} />;
+
       default:
         return (
           <Input
-            {...formField}
-            value={formField.value ?? ""}
+            {...commonProps}
             type={fieldConfig.type}
-            placeholder={fieldConfig.label}
-            autoComplete={fieldConfig.autoComplete}
+            value={formField.value ?? ""}
+            // onChange={fieldConfig?.onChange} // ✅ Controlled input
           />
         );
     }
@@ -187,21 +237,26 @@ const FormSheet = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6 px-4"
+            className="space-y-6 px-4 h-full overflow-y-auto"
           >
             {fields.map((field) => (
               <FormField
                 key={field.name}
                 control={form.control}
                 name={field.name}
-                render={({ field: formField }) => (
+                render={({ field: formField, fieldState }) => (
                   <FormItem>
                     {field.type !== "hidden" && field.type !== "checkbox" && (
-                      <FormLabel>{field.label}</FormLabel>
+                      <FormLabel>
+                        {field.label}
+                        {field.isLoading && (
+                          <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                        )}
+                      </FormLabel>
                     )}
                     <FormControl>
                       <div className="flex items-center gap-3">
-                        {renderField(field, formField)}
+                        {renderField(field, formField, fieldState)}
                         {field.type === "checkbox" && (
                           <FormLabel className="!mt-0" htmlFor={formField.id}>
                             {field.label}
@@ -240,6 +295,7 @@ const FormSheet = ({
                   e.stopPropagation();
                   setOpen(false);
                 }}
+                className={"mb-4"}
               >
                 Cancel
               </Button>

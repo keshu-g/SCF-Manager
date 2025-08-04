@@ -4,6 +4,7 @@ import { Sheet } from "@/components/ui/sheet";
 import FormSheet from "@/components/form-sheet";
 import { useGetClientsQuery } from "../features/client/clientApi";
 import { useGetProductsByClientIdQuery } from "../features/product/productApi";
+import { useGetMaterialsQuery } from "@/features/material/materialApi";
 import {
   useManufactureProductMutation,
   useGetTransactionsQuery,
@@ -16,8 +17,12 @@ const Transaction = () => {
   const { data: clients } = useGetClientsQuery();
   const { data: transactions, isLoading: isTransactionsLoading } =
     useGetTransactionsQuery();
+  const { data: materials, isLoading: isMaterialsLoading } =
+    useGetMaterialsQuery();
   const [createTransaction] = useManufactureProductMutation();
   const [clientId, setClientId] = useState(null);
+  const [selectedMaterials, setSelectedMaterials] = useState([]);
+  const [materialQuantities, setMaterialQuantities] = useState({});
 
   const {
     data: productsData,
@@ -34,8 +39,6 @@ const Transaction = () => {
   const handleCreate = useCallback(
     async (newTransaction) => {
       try {
-        console.log("new transaction : ", newTransaction);
-
         const response = await createTransaction({
           productId: newTransaction.product,
           quantity: newTransaction.quantity,
@@ -50,14 +53,39 @@ const Transaction = () => {
     [createTransaction]
   );
 
-  if (isTransactionsLoading || isProductsLoading) return <LoadingScreen />;
+  const handleMaterialTransaction = useCallback(
+    async (formData) => {
+      try {
+        const materialList = selectedMaterials.map((mat) => ({
+          materialId: mat.value,
+          quantity: materialQuantities[mat.value] || 0,
+        }));
+
+        const payload = {
+          productId: formData.product,
+          quantity: formData.quantity,
+          description: formData?.description,
+          materials: materialList,
+        };
+
+        const response = await createTransaction(payload).unwrap();
+        toast.success(response.message || "Manufactured successfully");
+      } catch (error) {
+        console.error(error);
+        toast.error(error?.data?.message || "Failed to create transaction");
+      }
+    },
+    [createTransaction, selectedMaterials, materialQuantities]
+  );
+
+  if (isTransactionsLoading) return <LoadingScreen />;
 
   return (
     <div className="container mx-auto h-full p-4 flex flex-col gap-4">
       <div className="flex gap-4 justify-evenly sm:justify-end">
         <FormSheet
-          title="Add Material"
-          description="Add new material details here."
+          title="Add Transaction"
+          description="Transaction details here."
           fields={[
             {
               label: "Client",
@@ -86,6 +114,7 @@ const Transaction = () => {
                 })) || [],
               required: true,
               autoComplete: "off",
+              isLoading: isProductsLoading,
             },
             {
               label: "Quantity",
@@ -107,11 +136,61 @@ const Transaction = () => {
           trigger={<Button>Manufacture Product</Button>}
         />
 
-        <Button>Manage Materials</Button>
+        <FormSheet
+          title="Manage Materials"
+          description="Transaction details here."
+          fields={[
+            {
+              name: "material",
+              type: "multiselect",
+              label: "Materials",
+              placeholder: "Select Material",
+              options:
+                materials?.data?.map((material) => ({
+                  value: material._id,
+                  label: material.name,
+                })) || [],
+              required: true,
+              autoComplete: "off",
+              isLoading: isMaterialsLoading,
+              onchange: (selected) => {
+                const selectedArr = selected || [];
+                // Reset selected materials
+                setSelectedMaterials(selectedArr);
+
+                // Set new materialQuantities from scratch
+                setMaterialQuantities(() => {
+                  const newQuantities = {};
+                  selectedArr.forEach((mat) => {
+                    newQuantities[mat.value] = null; // Default quantity
+                  });
+                  return newQuantities;
+                });
+              },
+            },
+            ...selectedMaterials.map((mat) => ({
+              label: `${mat.label} Quantity`,
+              name: `materialQty_${mat.value}`,
+              type: "number",
+              value: materialQuantities[mat.value] || null,
+              onChange: (e) =>
+                setMaterialQuantities((prev) => ({
+                  ...prev,
+                  [mat.value]: parseInt(e.target.value) || 0,
+                })),
+            })),
+          ]}
+          onSubmit={handleMaterialTransaction}
+          trigger={<Button>Manage Materials</Button>}
+        />
       </div>
 
       <div className="h-full rounded-sm p-0 sm:p-4 sm:border">
-        <TransactionTable transactions={transactions.data} />
+        <TransactionTable
+          transactions={transactions.data.filter(
+            (transaction) => transaction?.type === "PRODUCT"
+          )}
+        />
       </div>
     </div>
   );

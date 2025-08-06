@@ -145,10 +145,13 @@ const Transaction = () => {
               type: "multiselect",
               label: "Materials",
               placeholder: "Select Material",
+              description: "Use dropdown to make multiple selection",
               options:
                 materials?.data?.map((material) => ({
                   value: material._id,
                   label: material.name,
+                  quantity: material.quantity,
+                  unit: material.unit,
                 })) || [],
               required: true,
               autoComplete: "off",
@@ -157,7 +160,6 @@ const Transaction = () => {
                 const selectedArr = selected || [];
                 // Reset selected materials
                 setSelectedMaterials(selectedArr);
-
                 // Set new materialQuantities from scratch
                 setMaterialQuantities(() => {
                   const newQuantities = {};
@@ -168,9 +170,11 @@ const Transaction = () => {
                 });
               },
             },
+            // Material Quantities
             ...selectedMaterials.map((mat) => ({
-              label: `${mat.label} Quantity`,
+              label: `${mat.label} Quantity (${mat.quantity} ${mat.unit})`,
               name: `materialQty_${mat.value}`,
+              placeholder: "Quantity",
               type: "number",
               value: materialQuantities[mat.value] || null,
               onChange: (e) =>
@@ -182,6 +186,13 @@ const Transaction = () => {
           ]}
           onSubmit={handleMaterialTransaction}
           trigger={<Button>Manage Materials</Button>}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              // Reset selected materials and quantities when the sheet is closed
+              setSelectedMaterials([]);
+              setMaterialQuantities({});
+            }
+          }}
         />
       </div>
 

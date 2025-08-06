@@ -97,6 +97,7 @@ const FormSheet = ({
   onSubmit,
   trigger = "Edit",
   submitLabel = "Save changes",
+  onOpenChange
 }) => {
   const schema = useMemo(() => createSchema(fields), [fields]);
   const [open, setOpen] = useState(false);
@@ -189,20 +190,13 @@ const FormSheet = ({
                 className={`w-full ${
                   fieldState?.error ? "border border-red-500 ring-red-500" : ""
                 }`}
-                commandProps={{
-                  label: fieldConfig.commandLabel || "Select",
-                }}
-                defaultOptions={fieldConfig.options || []}
+                options={fieldConfig.options || []}
                 placeholder={fieldConfig.placeholder}
                 value={field.value || []}
                 onChange={(val) => {
                   field.onChange(val);
                   fieldConfig.onchange?.(val);
                 }}
-                onSearch={fieldConfig.onSearch}
-                emptyIndicator={
-                  <p className="text-center text-sm">No results found</p>
-                }
               />
             )}
           />
@@ -217,14 +211,22 @@ const FormSheet = ({
             {...commonProps}
             type={fieldConfig.type}
             value={formField.value ?? ""}
+            placeholder={fieldConfig.placeholder}
             // onChange={fieldConfig?.onChange} // ✅ Controlled input
           />
         );
     }
   }, []);
 
+  const handleOpenChange = (isOpen) => {
+    setOpen(isOpen); // Update internal state
+    if (onOpenChange) {
+      onOpenChange(isOpen); // Call parent's onOpenChange if provided
+    }
+  };
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <div onClick={(e) => e.stopPropagation()}>{trigger}</div>
       </SheetTrigger>

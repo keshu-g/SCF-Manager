@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SelectInput } from "./select-input";
 import MultipleSelector from "./ui/multiselect";
+import { Switch } from "./ui/switch";
 import { useState } from "react";
 import {
   Form,
@@ -48,7 +49,10 @@ const createSchema = (fields = []) =>
           validator = z.preprocess(
             (val) => (val === "" ? undefined : Number(val)),
             z
-              .number({ invalid_type_error: `${field.label} must be a number` })
+              .number({
+                required_error: `${field.label} is required`,
+                invalid_type_error: `${field.label} must be a number`,
+              })
               .min(0, "Value must be greater than or equal to zero")
           );
           break;
@@ -75,6 +79,18 @@ const createSchema = (fields = []) =>
             .min(1, `${field.label} is required`);
           break;
 
+        case "material-transaction":
+          validator = z.preprocess(
+            (val) => (val === "" ? undefined : Number(val)),
+            z
+            .number({
+                required_error: `${field.label} is required`,
+                invalid_type_error: `${field.label} is required`,
+              })
+              .min(1, "Value must be greater than zero")
+          );
+          break;
+
         default:
           validator = z.string();
           break;
@@ -97,6 +113,7 @@ const FormSheet = ({
   onSubmit,
   trigger = "Edit",
   submitLabel = "Save changes",
+  onOpenChange,
 }) => {
   const schema = useMemo(() => createSchema(fields), [fields]);
   const [open, setOpen] = useState(false);
@@ -186,24 +203,55 @@ const FormSheet = ({
             name={fieldConfig.name}
             render={({ field, fieldState }) => (
               <MultipleSelector
-                className={`w-full ${
-                  fieldState?.error ? "border border-red-500 ring-red-500" : ""
-                }`}
-                commandProps={{
-                  label: fieldConfig.commandLabel || "Select",
-                }}
-                defaultOptions={fieldConfig.options || []}
+                className={`w-full`}
+                options={fieldConfig.options || []}
                 placeholder={fieldConfig.placeholder}
                 value={field.value || []}
                 onChange={(val) => {
                   field.onChange(val);
                   fieldConfig.onchange?.(val);
                 }}
-                onSearch={fieldConfig.onSearch}
-                emptyIndicator={
-                  <p className="text-center text-sm">No results found</p>
-                }
               />
+            )}
+          />
+        );
+
+      case "material-transaction":
+        return (
+          <Controller
+            control={form.control}
+            name={fieldConfig.name}
+            render={({ field }) => (
+              <div className="flex items-center gap-2 w-full">
+                <Input
+                  {...commonProps}
+                  type="number"
+                  className="w-full"
+                  value={field.value ?? ""}
+                  onChange={(e) => {
+                    const value =
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value);
+                    field.onChange(value);
+                    fieldConfig.onChange?.(value);
+                  }}
+                  placeholder={fieldConfig.placeholder}
+                  disabled={fieldConfig.isLoading}
+                />
+                <div className="flex items-center gap-1">
+                  <Switch
+                    checked={fieldConfig.action === "add"}
+                    onCheckedChange={(checked) => {
+                      fieldConfig.onActionChange?.(checked);
+                    }}
+                    disabled={fieldConfig.isLoading}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {fieldConfig.action === "add" ? "Add" : "Remove"}
+                  </span>
+                </div>
+              </div>
             )}
           />
         );
@@ -217,14 +265,21 @@ const FormSheet = ({
             {...commonProps}
             type={fieldConfig.type}
             value={formField.value ?? ""}
-            // onChange={fieldConfig?.onChange} // ✅ Controlled input
+            placeholder={fieldConfig.placeholder}
           />
         );
     }
   }, []);
 
+  const handleOpenChange = (isOpen) => {
+    setOpen(isOpen);
+    if (onOpenChange) {
+      onOpenChange(isOpen);
+    }
+  };
+
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <div onClick={(e) => e.stopPropagation()}>{trigger}</div>
       </SheetTrigger>

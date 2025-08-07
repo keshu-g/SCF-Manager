@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SelectInput } from "./select-input";
 import MultipleSelector from "./ui/multiselect";
+import { Switch } from "./ui/switch";
 import { useState } from "react";
 import {
   Form,
@@ -48,7 +49,10 @@ const createSchema = (fields = []) =>
           validator = z.preprocess(
             (val) => (val === "" ? undefined : Number(val)),
             z
-              .number({ invalid_type_error: `${field.label} must be a number` })
+              .number({
+                required_error: `${field.label} is required`,
+                invalid_type_error: `${field.label} must be a number`,
+              })
               .min(0, "Value must be greater than or equal to zero")
           );
           break;
@@ -75,6 +79,18 @@ const createSchema = (fields = []) =>
             .min(1, `${field.label} is required`);
           break;
 
+        case "material-transaction":
+          validator = z.preprocess(
+            (val) => (val === "" ? undefined : Number(val)),
+            z
+            .number({
+                required_error: `${field.label} is required`,
+                invalid_type_error: `${field.label} is required`,
+              })
+              .min(1, "Value must be greater than zero")
+          );
+          break;
+
         default:
           validator = z.string();
           break;
@@ -97,7 +113,7 @@ const FormSheet = ({
   onSubmit,
   trigger = "Edit",
   submitLabel = "Save changes",
-  onOpenChange
+  onOpenChange,
 }) => {
   const schema = useMemo(() => createSchema(fields), [fields]);
   const [open, setOpen] = useState(false);
@@ -187,9 +203,7 @@ const FormSheet = ({
             name={fieldConfig.name}
             render={({ field, fieldState }) => (
               <MultipleSelector
-                className={`w-full ${
-                  fieldState?.error ? "border border-red-500 ring-red-500" : ""
-                }`}
+                className={`w-full`}
                 options={fieldConfig.options || []}
                 placeholder={fieldConfig.placeholder}
                 value={field.value || []}
@@ -198,6 +212,46 @@ const FormSheet = ({
                   fieldConfig.onchange?.(val);
                 }}
               />
+            )}
+          />
+        );
+
+      case "material-transaction":
+        return (
+          <Controller
+            control={form.control}
+            name={fieldConfig.name}
+            render={({ field }) => (
+              <div className="flex items-center gap-2 w-full">
+                <Input
+                  {...commonProps}
+                  type="number"
+                  className="w-full"
+                  value={field.value ?? ""}
+                  onChange={(e) => {
+                    const value =
+                      e.target.value === ""
+                        ? undefined
+                        : Number(e.target.value);
+                    field.onChange(value);
+                    fieldConfig.onChange?.(value);
+                  }}
+                  placeholder={fieldConfig.placeholder}
+                  disabled={fieldConfig.isLoading}
+                />
+                <div className="flex items-center gap-1">
+                  <Switch
+                    checked={fieldConfig.action === "add"}
+                    onCheckedChange={(checked) => {
+                      fieldConfig.onActionChange?.(checked);
+                    }}
+                    disabled={fieldConfig.isLoading}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {fieldConfig.action === "add" ? "Add" : "Remove"}
+                  </span>
+                </div>
+              </div>
             )}
           />
         );
@@ -212,16 +266,15 @@ const FormSheet = ({
             type={fieldConfig.type}
             value={formField.value ?? ""}
             placeholder={fieldConfig.placeholder}
-            // onChange={fieldConfig?.onChange} // ✅ Controlled input
           />
         );
     }
   }, []);
 
   const handleOpenChange = (isOpen) => {
-    setOpen(isOpen); // Update internal state
+    setOpen(isOpen);
     if (onOpenChange) {
-      onOpenChange(isOpen); // Call parent's onOpenChange if provided
+      onOpenChange(isOpen);
     }
   };
 

@@ -7,6 +7,7 @@ import { useGetProductsByClientIdQuery } from "../features/product/productApi";
 import { useGetMaterialsQuery } from "@/features/material/materialApi";
 import {
   useManufactureProductMutation,
+  useMaterialTransactionMutation,
   useGetTransactionsQuery,
 } from "../features/transaction/transactionApi";
 import { toast } from "sonner";
@@ -17,9 +18,13 @@ const Transaction = () => {
   const { data: clients } = useGetClientsQuery();
   const { data: transactions, isLoading: isTransactionsLoading } =
     useGetTransactionsQuery();
-  const { data: materials, isLoading: isMaterialsLoading } =
-    useGetMaterialsQuery();
+  const {
+    data: materials,
+    isLoading: isMaterialsLoading,
+    refetch: refetchMaterials,
+  } = useGetMaterialsQuery();
   const [createTransaction] = useManufactureProductMutation();
+  const [createMaterialTransaction] = useMaterialTransactionMutation();
   const [clientId, setClientId] = useState(null);
   const [selectedMaterials, setSelectedMaterials] = useState([]);
   const [materialQuantities, setMaterialQuantities] = useState({});
@@ -45,6 +50,7 @@ const Transaction = () => {
           description: newTransaction?.description,
         }).unwrap();
         toast.success(response.message || "Manufactured successfully");
+        refetchMaterials();
       } catch (error) {
         console.log(error);
         toast.error(error?.data?.message || "Failed to create material");
@@ -58,7 +64,9 @@ const Transaction = () => {
       try {
         const materialList = selectedMaterials.map((mat) => ({
           materialId: mat.value,
-          quantity: materialQuantities[mat.value] || 0,
+          action:
+            materialQuantities[mat.value].action === "add" ? "ADD" : "REMOVE",
+          actionQuantity: materialQuantities[mat.value].quantity,
         }));
 
         const payload = {
@@ -67,15 +75,16 @@ const Transaction = () => {
           description: formData?.description,
           materials: materialList,
         };
-
-        const response = await createTransaction(payload).unwrap();
-        toast.success(response.message || "Manufactured successfully");
+      
+        const response = await createMaterialTransaction(payload).unwrap();
+        toast.success(response.message || "Material transaction successful");
+        refetchMaterials();
       } catch (error) {
         console.error(error);
-        toast.error(error?.data?.message || "Failed to create transaction");
+        toast.error(error.data.message || "Failed to create transaction");
       }
     },
-    [createTransaction, selectedMaterials, materialQuantities]
+    [createMaterialTransaction, selectedMaterials, materialQuantities]
   );
 
   if (isTransactionsLoading) return <LoadingScreen />;
@@ -91,7 +100,6 @@ const Transaction = () => {
               label: "Client",
               name: "client",
               type: "select",
-              // selectLabel: "Select Unit",
               placeholder: "Select Client",
               options: clients?.data?.map((client) => ({
                 value: client._id,
@@ -120,8 +128,7 @@ const Transaction = () => {
               label: "Quantity",
               name: "quantity",
               type: "number",
-              // selectLabel: "Select Unit",
-              placeholder: "Select product",
+              placeholder: "Enter quantity",
               required: true,
               autoComplete: "off",
             },
@@ -158,29 +165,47 @@ const Transaction = () => {
               isLoading: isMaterialsLoading,
               onchange: (selected) => {
                 const selectedArr = selected || [];
-                // Reset selected materials
                 setSelectedMaterials(selectedArr);
-                // Set new materialQuantities from scratch
-                setMaterialQuantities(() => {
+                setMaterialQuantities((prev) => {
                   const newQuantities = {};
                   selectedArr.forEach((mat) => {
-                    newQuantities[mat.value] = null; // Default quantity
+                    newQuantities[mat.value] = {
+                      quantity: prev[mat.value]?.actionQuantity,
+                      action: prev[mat.value]?.action || "add",
+                    };
                   });
                   return newQuantities;
                 });
               },
             },
-            // Material Quantities
             ...selectedMaterials.map((mat) => ({
-              label: `${mat.label} Quantity (${mat.quantity} ${mat.unit})`,
+              label: `${mat.label}`,
+              description: `Available ${mat.quantity} ${mat.unit}`,
               name: `materialQty_${mat.value}`,
-              placeholder: "Quantity",
-              type: "number",
-              value: materialQuantities[mat.value] || null,
-              onChange: (e) =>
+              placeholder: `Enter Quantity to ${
+                materialQuantities[mat.value]?.action || "add"
+              }`,
+              type: "material-transaction",
+              value: materialQuantities[mat.value]?.quantity,
+              // Default to 1
+              action: materialQuantities[mat.value]?.action || "add",
+              required: true,
+              onChange: (value) => {
                 setMaterialQuantities((prev) => ({
                   ...prev,
-                  [mat.value]: parseInt(e.target.value) || 0,
+                  [mat.value]: {
+                    ...prev[mat.value],
+                    quantity: value,
+                  },
+                }));
+              },
+              onActionChange: (isAdd) =>
+                setMaterialQuantities((prev) => ({
+                  ...prev,
+                  [mat.value]: {
+                    ...prev[mat.value],
+                    action: isAdd ? "add" : "remove",
+                  },
                 })),
             })),
           ]}
@@ -188,7 +213,6 @@ const Transaction = () => {
           trigger={<Button>Manage Materials</Button>}
           onOpenChange={(isOpen) => {
             if (!isOpen) {
-              // Reset selected materials and quantities when the sheet is closed
               setSelectedMaterials([]);
               setMaterialQuantities({});
             }

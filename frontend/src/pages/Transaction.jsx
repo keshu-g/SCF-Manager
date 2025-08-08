@@ -222,9 +222,7 @@ const Transaction = () => {
 
       <div className="h-full rounded-sm p-0 sm:p-4 sm:border">
         <TransactionTable
-          transactions={transactions.data.filter(
-            (transaction) => transaction?.type === "PRODUCT"
-          )}
+          transactions={transactions.data}
         />
       </div>
     </div>

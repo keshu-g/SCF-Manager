@@ -16,7 +16,7 @@ import LoadingScreen from "@/components/loading-screen";
 
 const Transaction = () => {
   const { data: clients } = useGetClientsQuery();
-  const { data: transactions, isLoading: isTransactionsLoading } =
+  const { data: transactions, isLoading: isTransactionsLoading, refetch: refetchTransactions } =
     useGetTransactionsQuery();
   const {
     data: materials,
@@ -51,6 +51,7 @@ const Transaction = () => {
         }).unwrap();
         toast.success(response.message || "Manufactured successfully");
         refetchMaterials();
+        refetchTransactions();
       } catch (error) {
         console.log(error);
         toast.error(error?.data?.message || "Failed to create material");
@@ -79,6 +80,7 @@ const Transaction = () => {
         const response = await createMaterialTransaction(payload).unwrap();
         toast.success(response.message || "Material transaction successful");
         refetchMaterials();
+        refetchTransactions();
       } catch (error) {
         console.error(error);
         toast.error(error.data.message || "Failed to create transaction");

@@ -13,6 +13,7 @@ const TransactionProductCard = ({
   otherCosts = [],
   sellingPrice = 0,
   cashDiscount = 0,
+  createdAt = "Not Found",
   //   handleEdit,
   //   handleDelete,
 }) => {
@@ -23,24 +24,34 @@ const TransactionProductCard = ({
   const totalCashDiscount = totalMaterialCost * (cashDiscount / 100);
   const totalOtherCost = otherCosts.reduce((acc, item) => acc + item.amount, 0);
   const totalCost = totalMaterialCost + totalOtherCost + totalCashDiscount;
-  const profit = (sellingPrice * quantityManufactured) - totalCost;
+  const profit = sellingPrice * quantityManufactured - totalCost;
 
   return (
     <Card className="gap-4 w-full">
-      <CardHeader className="flex items-center justify-between px-4 sm:px-6">
-        <CardTitle className="text-lg space-x-2 space-y-1">
-          <Badge className="text-sm">
-            {productName}
-          </Badge>
-          <Badge className="text-sm">
-            {quantityManufactured} Manufactured
-          </Badge>
-          <Badge className="text-sm">
-            Client - {clientName} 
-          </Badge>
-          <Badge className="text-sm">
-            Selling Price - ₹{sellingPrice}
-          </Badge>
+      <CardHeader className="flex items-center justify-between px-4 sm:px-6 w-full">
+        <CardTitle className="p-4 border-b flex flex-col gap-3 border rounded-xl shadow-sm w-full">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold">{productName}</h2>
+            <Badge className="text-sm p-1 px-2">
+              {new Date(createdAt)
+                .toLocaleString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                })
+                .replace(",", " at")}
+            </Badge>
+          </div>
+
+          {/* Second row: details */}
+          <div className="flex flex-wrap gap-2">
+            <Badge>{quantityManufactured} units Manufactured</Badge>
+            <Badge>Client: {clientName}</Badge>
+            <Badge>Selling Price: ₹{sellingPrice}</Badge>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center px-4 sm:px-6">
@@ -97,11 +108,12 @@ const TransactionTable = ({ transactions }) => {
           key={transaction?._id}
           productName={transaction?.product?.product?.name}
           clientName={transaction?.product?.client?.name}
-          sellingPrice={transaction?.product?.summery?.sellingPrice}
           quantityManufactured={transaction?.product?.quantity}
           materials={transaction?.product?.summery?.material}
           otherCosts={transaction?.product?.summery?.otherCosts}
+          sellingPrice={transaction?.product?.summery?.sellingPrice}
           cashDiscount={transaction?.product?.summery?.cashDiscount}
+          createdAt={transaction?.createdAt}
         />
       ))}
     </div>

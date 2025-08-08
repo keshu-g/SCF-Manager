@@ -30,9 +30,9 @@ const TransactionProductCard = ({
     <Card className="gap-4 w-full">
       <CardHeader className="flex items-center justify-between px-4 sm:px-6 w-full">
         <CardTitle className="p-4 border-b flex flex-col gap-3 border rounded-xl shadow-sm w-full">
-          <div className="flex items-center justify-between">
+          <div className="flex gap-2 flex-wrap sm:justify-between justify-center">
             <h2 className="text-xl font-bold">{productName}</h2>
-            <Badge className="text-sm p-1 px-2">
+            <Badge className="text-xs sm:text-sm px-2">
               {new Date(createdAt)
                 .toLocaleString("en-GB", {
                   day: "numeric",
@@ -47,10 +47,10 @@ const TransactionProductCard = ({
           </div>
 
           {/* Second row: details */}
-          <div className="flex flex-wrap gap-2">
-            <Badge>{quantityManufactured} units Manufactured</Badge>
+          <div className="flex flex-wrap text-xm sm:flex-row  gap-2 sm:flex-wrap">
+            <Badge>{quantityManufactured} Manufactured</Badge>
             <Badge>Client: {clientName}</Badge>
-            <Badge>Selling Price: ₹{sellingPrice}</Badge>
+            <Badge>Price: ₹{sellingPrice}</Badge>
           </div>
         </CardTitle>
       </CardHeader>

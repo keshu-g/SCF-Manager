@@ -123,7 +123,11 @@ const getTransactions = apiHandler(async (req, res) => {
       {
         path: "product.client",
         select: "_id name",
-      }
+      },
+      {
+        path: "materials.material",
+        select: "_id name",
+      },
     ]);
   return apiResponse(messages.FETCH, "Transactions", transactions, res);
 });

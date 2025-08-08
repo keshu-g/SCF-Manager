@@ -13,6 +13,7 @@ const TransactionProductCard = ({
   otherCosts = [],
   sellingPrice = 0,
   cashDiscount = 0,
+  createdAt = "Not Found",
   //   handleEdit,
   //   handleDelete,
 }) => {
@@ -23,24 +24,35 @@ const TransactionProductCard = ({
   const totalCashDiscount = totalMaterialCost * (cashDiscount / 100);
   const totalOtherCost = otherCosts.reduce((acc, item) => acc + item.amount, 0);
   const totalCost = totalMaterialCost + totalOtherCost + totalCashDiscount;
-  const profit = (sellingPrice * quantityManufactured) - totalCost;
+  const profit = sellingPrice * quantityManufactured - totalCost;
 
   return (
     <Card className="gap-4 w-full">
-      <CardHeader className="flex items-center justify-between px-4 sm:px-6">
-        <CardTitle className="text-lg space-x-2 space-y-1">
-          <Badge className="text-sm">
-            {productName}
-          </Badge>
-          <Badge className="text-sm">
-            {quantityManufactured} Manufactured
-          </Badge>
-          <Badge className="text-sm">
-            Client - {clientName} 
-          </Badge>
-          <Badge className="text-sm">
-            Selling Price - ₹{sellingPrice}
-          </Badge>
+      <CardHeader className="flex items-center justify-between px-4 sm:px-6 w-full">
+        <CardTitle className="p-4 border-b flex flex-col gap-3 border rounded-xl shadow-sm w-full">
+          <div className="flex gap-2 flex-wrap sm:justify-between justify-center">
+            <h2 className="text-xl font-bold">Product Transaction</h2>
+            <Badge className="text-xs sm:text-sm px-2">
+              {new Date(createdAt)
+                .toLocaleString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                })
+                .replace(",", " at")}
+            </Badge>
+          </div>
+
+          <h2>{productName}</h2>
+          {/* Second row: details */}
+          <div className="flex flex-wrap text-xm sm:flex-row  gap-2 sm:flex-wrap">
+            <Badge>{quantityManufactured} Manufactured</Badge>
+            <Badge>Client: {clientName}</Badge>
+            <Badge>Price: ₹{sellingPrice}</Badge>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center px-4 sm:px-6">
@@ -89,21 +101,66 @@ const TransactionProductCard = ({
   );
 };
 
+const TransactionMaterialCard = ({
+  materials = [],
+  createdAt = "Not Found",
+}) => {
+  return (
+    <Card className="gap-4 w-full">
+      <CardHeader className="flex items-center justify-between px-4 sm:px-6 w-full">
+        <CardTitle className="p-4 border-b flex flex-col gap-3 border rounded-xl shadow-sm w-full">
+          <div className="flex gap-2 flex-wrap sm:justify-between justify-center">
+            <h2 className="text-xl font-bold">Material Transaction</h2>
+            <Badge className="text-xs sm:text-sm px-2">
+              {new Date(createdAt)
+                .toLocaleString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                })
+                .replace(",", " at")}
+            </Badge>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center px-4 sm:px-6">
+        <TransactionMaterialTable materials={materials} />
+      </CardContent>
+    </Card>
+  );
+};
+
 const TransactionTable = ({ transactions }) => {
   return (
     <div className="flex flex-col gap-4">
-      {transactions?.map((transaction) => (
-        <TransactionProductCard
-          key={transaction?._id}
-          productName={transaction?.product?.product?.name}
-          clientName={transaction?.product?.client?.name}
-          sellingPrice={transaction?.product?.summery?.sellingPrice}
-          quantityManufactured={transaction?.product?.quantity}
-          materials={transaction?.product?.summery?.material}
-          otherCosts={transaction?.product?.summery?.otherCosts}
-          cashDiscount={transaction?.product?.summery?.cashDiscount}
-        />
-      ))}
+      {transactions?.map((transaction) => {
+        if (transaction.type === "PRODUCT") {
+          return (
+            <TransactionProductCard
+              key={transaction?._id}
+              productName={transaction?.product?.product?.name}
+              clientName={transaction?.product?.client?.name}
+              quantityManufactured={transaction?.product?.quantity}
+              materials={transaction?.product?.summery?.material}
+              otherCosts={transaction?.product?.summery?.otherCosts}
+              sellingPrice={transaction?.product?.summery?.sellingPrice}
+              cashDiscount={transaction?.product?.summery?.cashDiscount}
+              createdAt={transaction?.createdAt}
+            />
+          );
+        } else {
+          return (
+            <TransactionMaterialCard
+              key={transaction?._id}
+              materials={transaction?.materials}
+              createdAt={transaction?.createdAt}
+            />
+          );
+        }
+      })}
     </div>
   );
 };

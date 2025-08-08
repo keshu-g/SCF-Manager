@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ProductOtherTable from "./product-other-table";
 import { cn } from "@/lib/utils";
 import TransactionProductMaterialTable from "./transaction-product-material-table";
+import TransactionMaterialTable from "./transaction-material-table";
 import { Badge } from "./ui/badge";
 
 const TransactionProductCard = ({
@@ -14,6 +15,7 @@ const TransactionProductCard = ({
   sellingPrice = 0,
   cashDiscount = 0,
   createdAt = "Not Found",
+  description = "",
   //   handleEdit,
   //   handleDelete,
 }) => {
@@ -53,6 +55,7 @@ const TransactionProductCard = ({
             <Badge>Client: {clientName}</Badge>
             <Badge>Price: ₹{sellingPrice}</Badge>
           </div>
+          {description && <p className="text-muted-foreground text-sm">{description}</p>}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-4 w-full justify-evenly sm:justify-center px-4 sm:px-6">
@@ -149,6 +152,7 @@ const TransactionTable = ({ transactions }) => {
               sellingPrice={transaction?.product?.summery?.sellingPrice}
               cashDiscount={transaction?.product?.summery?.cashDiscount}
               createdAt={transaction?.createdAt}
+              description={transaction?.description}
             />
           );
         } else {

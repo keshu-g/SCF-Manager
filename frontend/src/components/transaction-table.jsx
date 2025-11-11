@@ -23,7 +23,7 @@ const TransactionProductCard = ({
     (acc, item) => acc + item?.totalPrice,
     0
   );
-  const totalCashDiscount = totalMaterialCost * (cashDiscount / 100);
+  const totalCashDiscount = cashDiscount;
   const totalOtherCost = otherCosts.reduce((acc, item) => acc + item.amount, 0);
   const totalCost = totalMaterialCost + totalOtherCost + totalCashDiscount;
   const profit = sellingPrice * quantityManufactured - totalCost;

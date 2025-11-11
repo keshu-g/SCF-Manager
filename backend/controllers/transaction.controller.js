@@ -17,9 +17,10 @@ const manufactureProduct = apiHandler(async (req, res) => {
     return apiError(messages.NOT_FOUND, "Product", null, res);
   }
 
-  let finalOtherCost = product.otherCosts.forEach((cost) => {
-    cost.amount = cost.amount * quantity;
-  });
+  let finalOtherCost = product.otherCosts.map((otherCost) => ({
+    name: otherCost.name,
+    amount: otherCost.amount * quantity,
+  }));
 
   let transaction = new transactionModel({
     type: "PRODUCT",
@@ -64,9 +65,8 @@ const manufactureProduct = apiHandler(async (req, res) => {
   }
 
   // cashDiscount is % of totalMaterialCost
-  transaction.product.summery.cashDiscount = totalMaterialCost * product.cashDiscount / 100;
-
-  await transaction.save();
+  transaction.product.summery.cashDiscount =
+    (totalMaterialCost * product.cashDiscount) / 100;
 
   return apiResponse(messages.ADD_SUCCESS, "Transaction", transaction, res);
 });

@@ -3,6 +3,7 @@ import {
   stringValidation,
   idValidation,
   numberValidation,
+  decimalValidation,
 } from "../utils/joi.util.js";
 
 const getMaterialSchema = joi.object({
@@ -14,7 +15,7 @@ const addMaterialSchema = joi
     name: stringValidation,
     description: stringValidation.optional().allow(""),
     quantity: numberValidation,
-    price: numberValidation,
+    price: decimalValidation,
     unit: stringValidation.valid(
       "kilogram",
       "gram",

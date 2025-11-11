@@ -68,6 +68,8 @@ const manufactureProduct = apiHandler(async (req, res) => {
   transaction.product.summery.cashDiscount =
     (totalMaterialCost * product.cashDiscount) / 100;
 
+  await transaction.save();
+
   return apiResponse(messages.ADD_SUCCESS, "Transaction", transaction, res);
 });
 

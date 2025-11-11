@@ -17,6 +17,10 @@ const manufactureProduct = apiHandler(async (req, res) => {
     return apiError(messages.NOT_FOUND, "Product", null, res);
   }
 
+  let finalOtherCost = product.otherCosts.forEach((cost) => {
+    cost.amount = cost.amount * quantity;
+  });
+
   let transaction = new transactionModel({
     type: "PRODUCT",
     product: {
@@ -27,19 +31,21 @@ const manufactureProduct = apiHandler(async (req, res) => {
         name: product.name,
         sellingPrice: product.price,
         material: [],
-        otherCosts: product.otherCosts,
-        cashDiscount: product.cashDiscount,
+        otherCosts: finalOtherCost,
+        cashDiscount: 0,
       },
     },
     description: description,
     createdBy: req.user._id,
     updatedBy: req.user._id,
   });
-
+  let totalMaterialCost = 0;
   for (let unit of product.formula) {
     let material = unit.material;
     let materialId = material._id;
     let materialQuantity = unit.quantity * quantity;
+
+    totalMaterialCost += material.price * materialQuantity;
 
     await materialModel.findByIdAndUpdate(materialId, {
       $inc: { quantity: -materialQuantity },
@@ -56,6 +62,9 @@ const manufactureProduct = apiHandler(async (req, res) => {
       afterQuantity: material.quantity - materialQuantity,
     });
   }
+
+  // cashDiscount is % of totalMaterialCost
+  transaction.product.summery.cashDiscount = totalMaterialCost * product.cashDiscount / 100;
 
   await transaction.save();
 

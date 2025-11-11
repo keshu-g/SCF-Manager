@@ -118,7 +118,7 @@ const Material = () => {
       },
       {
         accessorFn: (row) => {
-          const price = parseInt(row.price);
+          const price = parseFloat(row.price);
           return formatValue({
             quantity: price,
             type: "currency",

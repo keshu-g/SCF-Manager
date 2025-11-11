@@ -32,7 +32,6 @@ const Transaction = () => {
   const {
     data: productsData,
     isLoading: isProductsLoading,
-    isError,
   } = useGetProductsByClientIdQuery(clientId, {
     skip: !clientId,
   });
@@ -57,7 +56,7 @@ const Transaction = () => {
         toast.error(error?.data?.message || "Failed to create material");
       }
     },
-    [createTransaction]
+    [createTransaction, refetchMaterials, refetchTransactions]
   );
 
   const handleMaterialTransaction = useCallback(
@@ -86,7 +85,7 @@ const Transaction = () => {
         toast.error(error.data.message || "Failed to create transaction");
       }
     },
-    [createMaterialTransaction, selectedMaterials, materialQuantities]
+    [createMaterialTransaction, selectedMaterials, materialQuantities, refetchMaterials, refetchTransactions]
   );
 
   if (isTransactionsLoading) return <LoadingScreen />;
